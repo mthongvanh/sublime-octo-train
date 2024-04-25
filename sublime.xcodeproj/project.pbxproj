@@ -13,7 +13,6 @@
 		4CCF69502BD5E3FF008A3987 /* sublimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF694F2BD5E3FF008A3987 /* sublimeTests.swift */; };
 		4CCF695A2BD5E3FF008A3987 /* sublimeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF69592BD5E3FF008A3987 /* sublimeUITests.swift */; };
 		4CCF695C2BD5E3FF008A3987 /* sublimeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF695B2BD5E3FF008A3987 /* sublimeUITestsLaunchTests.swift */; };
-		4CF795082BD6EBBB00EE3212 /* cleanboot_iOS in Frameworks */ = {isa = PBXBuildFile; productRef = 4CF795072BD6EBBB00EE3212 /* cleanboot_iOS */; };
 		4CF7950A2BD6EE4F00EE3212 /* home_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF795092BD6EE4F00EE3212 /* home_view_controller.swift */; };
 		4CF7950C2BD6EE6100EE3212 /* home_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF7950B2BD6EE6100EE3212 /* home_view_model.swift */; };
 		4CF795192BD711B500EE3212 /* water_level_report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF795182BD711B500EE3212 /* water_level_report.swift */; };
@@ -65,7 +64,6 @@
 		4CCF69552BD5E3FF008A3987 /* sublimeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sublimeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CCF69592BD5E3FF008A3987 /* sublimeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sublimeUITests.swift; sourceTree = "<group>"; };
 		4CCF695B2BD5E3FF008A3987 /* sublimeUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sublimeUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		4CF795042BD6E5E200EE3212 /* cleanboot_iOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = cleanboot_iOS; path = /Users/michael/Development/Projects/boostrap/cleanboot_iOS; sourceTree = "<absolute>"; };
 		4CF795092BD6EE4F00EE3212 /* home_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = home_view_controller.swift; sourceTree = "<group>"; };
 		4CF7950B2BD6EE6100EE3212 /* home_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = home_view_model.swift; sourceTree = "<group>"; };
 		4CF795182BD711B500EE3212 /* water_level_report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = water_level_report.swift; sourceTree = "<group>"; };
@@ -100,7 +98,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CF795082BD6EBBB00EE3212 /* cleanboot_iOS in Frameworks */,
 				53EC04B228F845A4B46DDED7 /* Pods_sublime.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,7 +408,6 @@
 		4CF841032BD5E732001C2DD7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4CF795042BD6E5E200EE3212 /* cleanboot_iOS */,
 				91302214C9670F359C7BE9C4 /* Pods_sublime.framework */,
 				F21D6FA21C87565D4256CE2E /* Pods_sublime_sublimeUITests.framework */,
 				1B249993F96E11B17FDE17C2 /* Pods_sublimeTests.framework */,
@@ -451,7 +447,6 @@
 			);
 			name = sublime;
 			packageProductDependencies = (
-				4CF795072BD6EBBB00EE3212 /* cleanboot_iOS */,
 			);
 			productName = cleanboot;
 			productReference = 4CCF69352BD5E3FE008A3987 /* sublime.app */;
@@ -529,7 +524,7 @@
 			);
 			mainGroup = 4CCF692C2BD5E3FE008A3987;
 			packageReferences = (
-				4CF841062BD5E7FD001C2DD7 /* XCLocalSwiftPackageReference "../cleanboot_iOS" */,
+				4CAD4B622BDA308000C0066D /* XCLocalSwiftPackageReference "../cleanboot_swift" */,
 			);
 			productRefGroup = 4CCF69362BD5E3FE008A3987 /* Products */;
 			projectDirPath = "";
@@ -1051,19 +1046,11 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		4CF841062BD5E7FD001C2DD7 /* XCLocalSwiftPackageReference "../cleanboot_iOS" */ = {
+		4CAD4B622BDA308000C0066D /* XCLocalSwiftPackageReference "../cleanboot_swift" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../cleanboot_iOS;
+			relativePath = ../cleanboot_swift;
 		};
 /* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		4CF795072BD6EBBB00EE3212 /* cleanboot_iOS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4CF841062BD5E7FD001C2DD7 /* XCLocalSwiftPackageReference "../cleanboot_iOS" */;
-			productName = cleanboot_iOS;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4CCF692D2BD5E3FE008A3987 /* Project object */;
 }
