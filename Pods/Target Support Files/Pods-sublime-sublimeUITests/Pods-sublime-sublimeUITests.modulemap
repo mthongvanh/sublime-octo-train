@@ -1,0 +1,6 @@
+framework module Pods_sublime_sublimeUITests {
+  umbrella header "Pods-sublime-sublimeUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

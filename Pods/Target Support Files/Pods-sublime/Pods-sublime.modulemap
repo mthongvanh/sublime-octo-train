@@ -1,0 +1,6 @@
+framework module Pods_sublime {
+  umbrella header "Pods-sublime-umbrella.h"
+
+  export *
+  module * { export * }
+}
