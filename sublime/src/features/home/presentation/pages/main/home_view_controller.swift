@@ -135,7 +135,24 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         content.text = "\(model.waterbody) @ \(model.station)"
         content.secondaryText = "flow: \(model.speed) m^3/s, depth: \(model.depth) cm"
         cell.contentConfiguration = content
+        let image = imageForFlow(flow: model.getFlow())
+        cell.accessoryView = image
         return cell
+    }
+    
+    func imageForFlow(flow: WaterFlowLevel) -> UIImageView? {
+        var imageView: UIImageView?
+        switch flow {
+        case .high:
+            imageView = UIImageView(image: UIImage(systemName: "exclamationmark.triangle.fill"))
+            imageView?.tintColor = UIColor.red
+        case .low:
+            imageView = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
+            imageView?.tintColor = UIColor.green
+        default:
+            imageView = nil
+        }
+        return imageView
     }
 }
 
