@@ -1,4 +1,4 @@
-import cleanboot_iOS
+import cleanboot_swift
 
 /// # AppServiceLocator
 /// When both an identifier and generic type are supplied, the identifier takes precedence. Only one

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import cleanboot_iOS
+import cleanboot_swift
 
 struct GetWaterLevelsUseCase: UseCase {
     var repo: WaterLevelRepository
@@ -14,7 +14,7 @@ struct GetWaterLevelsUseCase: UseCase {
         self.repo = repo
     }
     
-    func execute(params: Void) async throws -> cleanboot_iOS.UseCaseResult<[WaterLevelReport]> {
+    func execute(params: Void) async throws -> cleanboot_swift.UseCaseResult<[WaterLevelReport]> {
         do {
             let reports = try await repo.getWaterLevels(span: .latest)
             return .success(reports)

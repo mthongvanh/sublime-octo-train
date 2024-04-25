@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import cleanboot_iOS
+import cleanboot_swift
 
 class BootstrapViewModel: ViewModel<BootstrapViewModel> {
     override init(

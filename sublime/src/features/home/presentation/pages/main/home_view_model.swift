@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import cleanboot_iOS
+import cleanboot_swift
 
 class HomeViewModel: ViewModel<HomeViewModel> {
     

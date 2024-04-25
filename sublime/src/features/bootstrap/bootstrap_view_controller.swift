@@ -7,7 +7,7 @@
 
 import UIKit
 import SnapKit
-import cleanboot_iOS
+import cleanboot_swift
 
 class BootstrapViewController: UIViewController {
     

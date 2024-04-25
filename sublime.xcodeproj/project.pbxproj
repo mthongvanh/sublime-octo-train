@@ -10,6 +10,7 @@
 		088C5593CD8DE82F0CF60310 /* Pods_sublime_sublimeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F21D6FA21C87565D4256CE2E /* Pods_sublime_sublimeUITests.framework */; };
 		4C01201B2BD7E9E8002744C9 /* water_level_report_arso.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C01201A2BD7E9E8002744C9 /* water_level_report_arso.swift */; };
 		4C01201D2BD90EEE002744C9 /* get_water_levels_use_case.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C01201C2BD90EEE002744C9 /* get_water_levels_use_case.swift */; };
+		4CCA18F22BDA37B100A54A84 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CCA18F12BDA37B100A54A84 /* cleanboot_swift */; };
 		4CCF69502BD5E3FF008A3987 /* sublimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF694F2BD5E3FF008A3987 /* sublimeTests.swift */; };
 		4CCF695A2BD5E3FF008A3987 /* sublimeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF69592BD5E3FF008A3987 /* sublimeUITests.swift */; };
 		4CCF695C2BD5E3FF008A3987 /* sublimeUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF695B2BD5E3FF008A3987 /* sublimeUITestsLaunchTests.swift */; };
@@ -98,6 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CCA18F22BDA37B100A54A84 /* cleanboot_swift in Frameworks */,
 				53EC04B228F845A4B46DDED7 /* Pods_sublime.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -447,6 +449,7 @@
 			);
 			name = sublime;
 			packageProductDependencies = (
+				4CCA18F12BDA37B100A54A84 /* cleanboot_swift */,
 			);
 			productName = cleanboot;
 			productReference = 4CCF69352BD5E3FE008A3987 /* sublime.app */;
@@ -1051,6 +1054,14 @@
 			relativePath = ../cleanboot_swift;
 		};
 /* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4CCA18F12BDA37B100A54A84 /* cleanboot_swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAD4B622BDA308000C0066D /* XCLocalSwiftPackageReference "../cleanboot_swift" */;
+			productName = cleanboot_swift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4CCF692D2BD5E3FE008A3987 /* Project object */;
 }

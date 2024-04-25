@@ -1,5 +1,5 @@
 import Foundation
-import cleanboot_iOS
+import cleanboot_swift
 
 class DependencyInjector {
     public func bootstrap(serviceLocator: ServiceLocator) async {
