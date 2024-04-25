@@ -1,6 +1,6 @@
 //
 //  SceneDelegate.swift
-//  cleanboot
+//  sublime
 //
 //  Created by Michael Thongvanh on 4/22/24.
 //

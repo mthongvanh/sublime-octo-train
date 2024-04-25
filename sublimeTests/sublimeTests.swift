@@ -1,6 +1,6 @@
 //
-//  cleanbootTests.swift
-//  cleanbootTests
+//  sublimeTests.swift
+//  sublimeTests
 //
 //  Created by Michael Thongvanh on 4/22/24.
 //

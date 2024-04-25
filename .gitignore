@@ -1,0 +1,11 @@
+## User settings
+xcuserdata/
+*/xcuserdata/
+#/sublime.xcodeproj/xcuserdata/
+
+/.idea/
+/Pods/
+
+## Xcode 8 and earlier
+*.xcscmblueprint
+*.xccheckout
