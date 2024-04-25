@@ -7,6 +7,7 @@
 
 import Foundation
 import cleanboot_swift
+import MapKit
 
 class HomeViewModel: ViewModel<HomeViewModel> {
     
@@ -14,7 +15,41 @@ class HomeViewModel: ViewModel<HomeViewModel> {
     
     var reports = [WaterLevelReport]()
     
-    init(getWaterLevels: GetWaterLevelsUseCase, onModelReady: OnModelReady<HomeViewModel>? = nil, onModelUpdate: OnModelUpdate<HomeViewModel>? = nil) {
+    var ljubljana = CLLocationCoordinate2D(
+        latitude: CLLocationDegrees(
+            floatLiteral: 46.05108000
+        ),
+        longitude: CLLocationDegrees(
+            floatLiteral: 14.50513000
+        )
+    )
+    
+    var mapHeightFactor = 0.35
+    var mapZoomLevel = 0.5
+    
+    func initialLocation() -> CLLocationCoordinate2D {
+        ljubljana
+    }
+    
+    func initialRegion() -> MKCoordinateRegion {
+        MKCoordinateRegion(
+            center: initialLocation(),
+            span: MKCoordinateSpan(
+                latitudeDelta: CLLocationDegrees(
+                    mapZoomLevel
+                ),
+                longitudeDelta: CLLocationDegrees(
+                    mapZoomLevel
+                )
+            )
+        )
+    }
+    
+    init(
+        getWaterLevels: GetWaterLevelsUseCase,
+        onModelReady: OnModelReady<HomeViewModel>? = nil,
+        onModelUpdate: OnModelUpdate<HomeViewModel>? = nil
+    ) {
         self.getWaterLevels = getWaterLevels
         super.init(onModelReady: onModelReady, onModelUpdate: onModelUpdate)
     }

@@ -123,6 +123,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4CCA18F32BDA859E00A54A84 /* views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = views;
+			sourceTree = "<group>";
+		};
 		4CCF692C2BD5E3FE008A3987 = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				4CF7950E2BD6EE9000EE3212 /* pages */,
+				4CCA18F32BDA859E00A54A84 /* views */,
 			);
 			path = presentation;
 			sourceTree = "<group>";
@@ -889,7 +897,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.thongvanh.michael.cleanboot;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thongvanh.michael.sublime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -919,7 +927,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.thongvanh.michael.cleanboot;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thongvanh.michael.sublime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

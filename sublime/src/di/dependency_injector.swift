@@ -61,9 +61,12 @@ class DependencyInjector {
             do {
                 try serviceLocator.registerLazySingleton(
                     instantiator: {
-                        HomeViewController(
+                        let hvc = HomeViewController(
                             viewModel: homeVM
                         )
+                        homeVM.onModelReady = hvc.onModelReady(viewModel:)
+                        homeVM.onModelUpdate = hvc.onModelUpdate(viewModel:)
+                        return hvc
                     },
                     type: HomeViewController.self,
                     identifier: nil
