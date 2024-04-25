@@ -7,6 +7,7 @@
 
 import UIKit
 import MapKit
+import cleanboot_swift
 
 class HomeViewController: UIViewController, BaseViewController {
     
@@ -102,24 +103,23 @@ class HomeViewController: UIViewController, BaseViewController {
             debugPrint(error)
         }
     }
-}
-
-class SublimeMapAnnotation: NSObject, MKAnnotation {
-    var coordinate: CLLocationCoordinate2D
-    var flowLevel: WaterFlowLevel
-    var title: String?
     
-    init(title: String, coordinate: CLLocationCoordinate2D, flowLevel: WaterFlowLevel) {
-        self.title = title
-        self.flowLevel = flowLevel
-        self.coordinate = coordinate
+    func zoom(report: WaterLevelReport) {
+        let coords = report.getLocationCoordinates()
+        setRegion(coords: coords)
     }
-}
-
-protocol BaseViewController {
-    associatedtype T
-    func onModelUpdate(viewModel: T)
-    func onModelReady(viewModel: T)
+    
+    /// sets zoom region with visible distance spanning a default 20km
+    func setRegion(coords: CLLocationCoordinate2D, meters: Double = 10000) {
+        mapView?.setRegion(
+            MKCoordinateRegion(
+                center: coords,
+                latitudinalMeters: meters,
+                longitudinalMeters: meters
+            ),
+            animated: true
+        )
+    }
 }
 
 extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
@@ -153,6 +153,10 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
             imageView = nil
         }
         return imageView
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        zoom(report: viewModel.reports[indexPath.row])
     }
 }
 

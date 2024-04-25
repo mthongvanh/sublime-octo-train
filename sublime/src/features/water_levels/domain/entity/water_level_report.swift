@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MapKit
 
 struct WaterLevelReport: Codable {
     var waterbody: String
@@ -35,6 +36,13 @@ extension WaterLevelReport {
         default:
             return .unknown
         }
+    }
+    
+    public func getLocationCoordinates() -> CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(
+            latitude: CLLocationDegrees(floatLiteral: latitude),
+            longitude: CLLocationDegrees(floatLiteral: longitude)
+        )
     }
 }
 
