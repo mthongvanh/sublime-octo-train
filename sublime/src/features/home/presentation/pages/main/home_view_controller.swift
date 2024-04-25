@@ -33,7 +33,7 @@ class HomeViewController: UIViewController, BaseViewController {
         super.viewDidLoad()
         setupViews()
     }
-        
+    
     // view setup
     func setupViews() {
         // setup map view
@@ -42,13 +42,17 @@ class HomeViewController: UIViewController, BaseViewController {
             viewModel.initialRegion(),
             animated: false
         )
+        mapView?.register(
+            MKMarkerAnnotationView.self,
+            forAnnotationViewWithReuseIdentifier: "waterStationAnnoation"
+        )
         
         // setup reports table view
         tableView?.dataSource = self
         tableView?.delegate = self
         tableView?.register(
             UITableViewCell.self,
-            forCellReuseIdentifier: "myCell"
+            forCellReuseIdentifier: "reportCell"
         )
         
         // make sure to add subviews before setting up constraints
@@ -57,7 +61,7 @@ class HomeViewController: UIViewController, BaseViewController {
         
         setupConstraints()
     }
-
+    
     func setupConstraints() {
         mapView?.snp.makeConstraints({ make in
             make.leading.top.trailing.equalToSuperview()
@@ -84,6 +88,31 @@ class HomeViewController: UIViewController, BaseViewController {
     
     func onModelReady(viewModel: T) {
         tableView?.reloadData()
+        let stations = viewModel.getStations()
+        do {
+            mapView?.addAnnotations(
+                try stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
+                return SublimeMapAnnotation(
+                    title: key.components(separatedBy: CharacterSet(["+"])).first!,
+                    coordinate: value.1,
+                    flowLevel: value.2
+                )
+            }))
+        } catch {
+            debugPrint(error)
+        }
+    }
+}
+
+class SublimeMapAnnotation: NSObject, MKAnnotation {
+    var coordinate: CLLocationCoordinate2D
+    var flowLevel: WaterFlowLevel
+    var title: String?
+    
+    init(title: String, coordinate: CLLocationCoordinate2D, flowLevel: WaterFlowLevel) {
+        self.title = title
+        self.flowLevel = flowLevel
+        self.coordinate = coordinate
     }
 }
 
@@ -99,17 +128,43 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "myCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "reportCell", for: indexPath)
         
         let model = viewModel.reports[indexPath.row]
-            var content = cell.defaultContentConfiguration()
-            content.text = "\(model.waterbody) @ \(model.station)"
-            content.secondaryText = "flow: \(model.speed) m^3/s, depth: \(model.depth) cm"
-            cell.contentConfiguration = content
+        var content = cell.defaultContentConfiguration()
+        content.text = "\(model.waterbody) @ \(model.station)"
+        content.secondaryText = "flow: \(model.speed) m^3/s, depth: \(model.depth) cm"
+        cell.contentConfiguration = content
         return cell
     }
 }
 
 extension HomeViewController: MKMapViewDelegate {
-    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        guard !annotation.isKind(of: MKUserLocation.self) else {
+            // Make a fast exit if the annotation is the `MKUserLocation`, as it's not an annotation view we wish to customize.
+            return nil
+        }
+        
+        var annotationView: MKAnnotationView?
+        if let sublime = annotation as? SublimeMapAnnotation {
+            let view = MKMarkerAnnotationView(
+                annotation: sublime,
+                reuseIdentifier: "waterStationAnnoation"
+            )
+            view.glyphText = sublime.title
+            annotationView = view
+            switch sublime.flowLevel {
+            case .low:
+                view.markerTintColor = UIColor.green
+            case .high:
+                view.markerTintColor = UIColor.red
+            default:
+                view.markerTintColor = UIColor.yellow
+            }
+        
+        }
+        return annotationView
+    }
 }

@@ -78,9 +78,31 @@ class HomeViewModel: ViewModel<HomeViewModel> {
                 self.loadState = self.reports.isEmpty ? .readyNoData : .ready
                 modelReady(self)
             }
-            
         } catch {
             updateLoadState(loadState: .error)
         }
+    }
+    
+    func getStations() -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
+        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
+        for report in reports {
+            let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
+            if (!stations.keys.contains(key)) {
+                let location = CLLocationCoordinate2D(
+                    latitude: CLLocationDegrees(
+                        floatLiteral: report.latitude
+                    ),
+                    longitude: CLLocationDegrees(
+                        floatLiteral: report.longitude
+                    )
+                )
+                
+                stations.updateValue(
+                    (report.station, location, report.getFlow()),
+                    forKey: key
+                )
+            }
+        }
+        return stations
     }
 }

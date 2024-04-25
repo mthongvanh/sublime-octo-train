@@ -18,3 +18,29 @@ struct WaterLevelReport: Codable {
     var depth: Double
     var flow: String
 }
+
+extension WaterLevelReport {
+    public func getFlow() -> WaterFlowLevel {
+        switch flow {
+            
+        case "srednji pretok":
+            return .medium
+            
+        case "mali pretok":
+            return .low
+            
+        case "velik pretok":
+            return .high
+            
+        default:
+            return .unknown
+        }
+    }
+}
+
+enum WaterFlowLevel: String {
+    case low = "low"
+    case medium = "medium"
+    case high = "high"
+    case unknown = "unknown"
+}
