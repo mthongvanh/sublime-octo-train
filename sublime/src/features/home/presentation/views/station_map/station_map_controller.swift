@@ -15,7 +15,35 @@ class StationMapController: NSObject {
     init(viewModel: StationMapViewModel) {
         self.viewModel = viewModel
     }
+    
+    func updateStations(filterText: String? = nil, reports: [WaterLevelReport]) {
+        let stations = getStations(filterText: filterText, reports: reports)
+        viewModel.updateStations(stations: stations)
+    }
 
+    func getStations(filterText: String? = nil, reports: [WaterLevelReport]) -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
+        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
+        for report in reports {
+            let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
+            let matchesFilter = filterText == nil ? true : !(key.range(of: filterText!.trimmingCharacters(in: CharacterSet.whitespaces), options: [.caseInsensitive])?.isEmpty ?? true)
+            if (!stations.keys.contains(key) && matchesFilter) {
+                let location = CLLocationCoordinate2D(
+                    latitude: CLLocationDegrees(
+                        floatLiteral: report.latitude
+                    ),
+                    longitude: CLLocationDegrees(
+                        floatLiteral: report.longitude
+                    )
+                )
+                
+                stations.updateValue(
+                    (report.station, location, report.getFlow()),
+                    forKey: key
+                )
+            }
+        }
+        return stations
+    }
 }
 
 

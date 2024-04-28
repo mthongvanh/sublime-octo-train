@@ -43,29 +43,6 @@ class StationMapViewController: UIViewController, BaseViewController {
         )
     }
     
-    func updateStations(filterText: String? = nil, reports: [WaterLevelReport]) {
-        let stations = controller.viewModel.getStations(filterText: filterText, reports: reports)
-        do {
-            mapView.removeAnnotations(mapView.annotations)
-            mapView.addAnnotations(
-                try stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
-                    return SublimeMapAnnotation(
-                        title: key.components(separatedBy: CharacterSet(["+"])).first!,
-                        coordinate: value.1,
-                        flowLevel: value.2
-                    )
-                }))
-        } catch {
-            debugPrint(error)
-        }
-    }
-    
-    func zoom() {
-        if let coords = controller.viewModel.lastSelectedLocation?.getLocationCoordinates() {
-            setRegion(coords: coords)
-        }
-    }
-    
     /// sets zoom region with visible distance spanning a default 10km
     func setRegion(coords: CLLocationCoordinate2D, meters: Double = 10000) {
         mapView.setRegion(
@@ -82,10 +59,33 @@ class StationMapViewController: UIViewController, BaseViewController {
     
     func onModelReady(viewModel: StationMapViewModel) {
         //stub
-//        zoom()
     }
     
     func onModelUpdate(viewModel: StationMapViewModel) {
-        zoom()
+        if let coords = viewModel.lastSelectedLocation?.getLocationCoordinates() {
+            setRegion(coords: coords)
+        }
+        
+        updateAnnotations(viewModel: viewModel)
+    }
+    
+    func updateAnnotations(viewModel: StationMapViewModel) {
+        if let mapViewAnnotations = mapView.annotations as? [SublimeMapAnnotation] {
+            let updatedAnnotations = viewModel.annotations
+            for annotation in updatedAnnotations {
+                if (!mapViewAnnotations.contains(annotation)) {
+                    mapView.addAnnotation(annotation)
+                }
+            }
+            
+            mapView.removeAnnotations(mapViewAnnotations.compactMap({ displayedAnnotation in
+                /// remove any currently displayed annotations which are not in the updated annotation list
+                if (!updatedAnnotations.contains(displayedAnnotation)) {
+                    return displayedAnnotation
+                } else {
+                    return nil
+                }
+            }))
+        }
     }
 }

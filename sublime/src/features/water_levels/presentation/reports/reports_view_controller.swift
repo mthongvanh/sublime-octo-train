@@ -11,7 +11,10 @@ import cleanboot_swift
 class ReportsViewController: UITableViewController, BaseViewController {
     var controller: ReportsController
     
-    init(controller: ReportsController, style: UITableView.Style) {
+    init(
+        controller: ReportsController,
+        style: UITableView.Style
+    ) {
         self.controller = controller
         super.init(style: style)
         sharedInit(controller)

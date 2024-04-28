@@ -16,45 +16,6 @@ class HomeViewModel: ViewModel<HomeViewModel> {
     var reports = [WaterLevelReport]()
     var filtered = [WaterLevelReport]()
     
-    var ljubljana = CLLocationCoordinate2D(
-        latitude: CLLocationDegrees(
-            floatLiteral: 46.05108000
-        ),
-        longitude: CLLocationDegrees(
-            floatLiteral: 14.50513000
-        )
-    )
-    
-    var mapHeightFactor = 0.35
-    var mapZoomLevel = 0.5
-    var lastSelectedLocation: WaterLevelReport? {
-        didSet {
-            guard let update = onModelUpdate else {
-                return
-            }
-            
-            update(self)
-        }
-    }
-    
-    func initialLocation() -> CLLocationCoordinate2D {
-        ljubljana
-    }
-    
-    func initialRegion() -> MKCoordinateRegion {
-        MKCoordinateRegion(
-            center: initialLocation(),
-            span: MKCoordinateSpan(
-                latitudeDelta: CLLocationDegrees(
-                    mapZoomLevel
-                ),
-                longitudeDelta: CLLocationDegrees(
-                    mapZoomLevel
-                )
-            )
-        )
-    }
-    
     init(
         getWaterLevels: GetWaterLevelsUseCase,
         onModelReady: OnModelReady<HomeViewModel>? = nil,
@@ -93,30 +54,6 @@ class HomeViewModel: ViewModel<HomeViewModel> {
         } catch {
             updateLoadState(loadState: .error)
         }
-    }
-    
-    func getStations(filterText: String? = nil) -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
-        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
-        for report in reports {
-            let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
-            let matchesFilter = filterText == nil ? true : !(key.range(of: filterText!.trimmingCharacters(in: CharacterSet.whitespaces), options: [.caseInsensitive])?.isEmpty ?? true)
-            if (!stations.keys.contains(key) && matchesFilter) {
-                let location = CLLocationCoordinate2D(
-                    latitude: CLLocationDegrees(
-                        floatLiteral: report.latitude
-                    ),
-                    longitude: CLLocationDegrees(
-                        floatLiteral: report.longitude
-                    )
-                )
-                
-                stations.updateValue(
-                    (report.station, location, report.getFlow()),
-                    forKey: key
-                )
-            }
-        }
-        return stations
     }
     
     func filter(text: String) {

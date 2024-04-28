@@ -21,6 +21,8 @@ class StationMapViewModel: ViewModel<StationMapViewModel> {
         )
     }
     
+    var annotations = [SublimeMapAnnotation]()
+    
     var ljubljana = CLLocationCoordinate2D(
         latitude: CLLocationDegrees(
             floatLiteral: 46.05108000
@@ -60,29 +62,20 @@ class StationMapViewModel: ViewModel<StationMapViewModel> {
         )
     }
     
-    
-    
-    func getStations(filterText: String? = nil, reports: [WaterLevelReport]) -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
-        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
-        for report in reports {
-            let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
-            let matchesFilter = filterText == nil ? true : !(key.range(of: filterText!.trimmingCharacters(in: CharacterSet.whitespaces), options: [.caseInsensitive])?.isEmpty ?? true)
-            if (!stations.keys.contains(key) && matchesFilter) {
-                let location = CLLocationCoordinate2D(
-                    latitude: CLLocationDegrees(
-                        floatLiteral: report.latitude
-                    ),
-                    longitude: CLLocationDegrees(
-                        floatLiteral: report.longitude
-                    )
+    func updateStations(stations: [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]) {
+        do {
+            annotations = try stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
+                SublimeMapAnnotation(
+                    title: key.components(separatedBy: CharacterSet(["+"])).first!,
+                    coordinate: value.1,
+                    flowLevel: value.2
                 )
-                
-                stations.updateValue(
-                    (report.station, location, report.getFlow()),
-                    forKey: key
-                )
+            })
+            if let onModelUpdate = onModelUpdate {
+                onModelUpdate(self)
             }
+        } catch {
+            debugPrint(error)
         }
-        return stations
     }
 }

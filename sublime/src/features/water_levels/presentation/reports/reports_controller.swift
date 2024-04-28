@@ -10,7 +10,7 @@ import cleanboot_swift
 
 class ReportsController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
-    typealias OnSelect = (IndexPath) -> Void
+    typealias OnSelect = (IndexPath, WaterLevelReport) -> Void
     
     var viewModel: ReportsViewModel
     var onSelect: OnSelect?
@@ -45,7 +45,7 @@ class ReportsController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let onSelect = onSelect {
-            onSelect(indexPath)
+            onSelect(indexPath, viewModel.reports[indexPath.row])
         }
     }
     
