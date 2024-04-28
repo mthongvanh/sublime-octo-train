@@ -52,4 +52,8 @@ class ReportsController: NSObject, UITableViewDelegate, UITableViewDataSource {
     @objc func beginRefresh() async {
         await viewModel.prepareData()
     }
+    
+    func filter(text: String) {
+        viewModel.filter(text: text)
+    }
 }

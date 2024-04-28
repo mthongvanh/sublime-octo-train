@@ -55,35 +55,4 @@ class HomeViewModel: ViewModel<HomeViewModel> {
             updateLoadState(loadState: .error)
         }
     }
-    
-    func filter(text: String) {
-        // Strip out all the leading and trailing spaces.
-        let whitespaceCharacterSet = CharacterSet.whitespaces
-        let strippedString = text.trimmingCharacters(in: whitespaceCharacterSet)
-        
-        filtered = reports.compactMap({ report in
-            if (report.waterbody.range(
-                of: strippedString,
-                options: [.caseInsensitive]
-            )?.isEmpty == false
-                || report.station.range(
-                    of: strippedString,
-                    options: [.caseInsensitive]
-                )?.isEmpty == false)
-            {
-                return report
-            } else {
-                return nil
-            }
-        })
-        
-        DispatchQueue.main.async {
-            guard let update = self.onModelUpdate else {
-                return;
-            }
-            
-            update(self)
-        }
-        
-    }
 }

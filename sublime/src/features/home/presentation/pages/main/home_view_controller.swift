@@ -14,11 +14,10 @@ class HomeViewController: UIViewController, BaseViewController {
     var viewModel: HomeViewModel
     
     var reportsViewController: ReportsViewController
+    var filterViewController: ReportFilterViewController
     var stationMapViewController: StationMapViewController
     
     var filterSearchBar = UISearchBar()
-    var reportFilterController: ReportsController?
-    var filterResultsTableView = UITableView()
     
     init(viewModel: HomeViewModel) {
         // setup view model
@@ -35,6 +34,13 @@ class HomeViewController: UIViewController, BaseViewController {
         let smc = StationMapController(viewModel: smvm)
         stationMapViewController = StationMapViewController(
             controller: smc
+        )
+        
+        let filterVM = ReportsViewModel()
+        let filterController = ReportsController(viewModel: filterVM)
+        filterViewController = ReportFilterViewController(
+            controller: filterController,
+            style: .plain
         )
         
         super.init(nibName: nil, bundle: nil)
@@ -59,19 +65,13 @@ class HomeViewController: UIViewController, BaseViewController {
             self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
         }
         
-        filterResultsTableView.isHidden = true
-        filterResultsTableView.dataSource = reportFilterController
-        filterResultsTableView.delegate = reportFilterController
-        filterResultsTableView.register(
-            UITableViewCell.self,
-            forCellReuseIdentifier: "reportCell"
-        )
+        filterViewController.tableView.isHidden = true
         
         // make sure to add subviews before setting up constraints
         view.addSubview(stationMapViewController.mapView)
         view.addSubview(reportsViewController.tableView)
         view.addSubview(filterSearchBar)
-        view.addSubview(filterResultsTableView)
+        view.addSubview(filterViewController.tableView)
         
         setupConstraints()
     }
@@ -97,11 +97,11 @@ class HomeViewController: UIViewController, BaseViewController {
             make.top.equalTo(filterSearchBar.snp.bottom)
         }
         
-        filterResultsTableView.snp.makeConstraints({ make in
+        filterViewController.tableView.snp.makeConstraints({ make in
             make.leading.trailing.bottom.equalToSuperview()
         })
         
-        filterResultsTableView.snp.makeConstraints { make in
+        filterViewController.tableView.snp.makeConstraints { make in
             make.top.equalTo(filterSearchBar.snp.bottom)
         }
     }
@@ -111,22 +111,23 @@ class HomeViewController: UIViewController, BaseViewController {
     
     func onModelUpdate(viewModel: T) {
         reportsViewController.tableView.reloadData()
-        filterResultsTableView.reloadData()
+        filterViewController.tableView.reloadData()
     }
     
     func onModelReady(viewModel: T) {
         reportsViewController.controller.setReports(viewModel.reports)
+        filterViewController.controller.viewModel.reportCollection = viewModel.reports
         stationMapViewController.controller.updateStations(reports: viewModel.reports)
     }
 }
 
 extension HomeViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filterResultsTableView.isHidden = (searchBar.text?.count ?? 0) < 3
-        viewModel.filter(text: searchText)
+        filterViewController.tableView.isHidden = (searchBar.text?.count ?? 0) < 3
+        filterViewController.controller.filter(text: searchText)
         
         stationMapViewController.controller.updateStations(
-            filterText: filterResultsTableView.isHidden ? nil : searchText,
+            filterText: filterViewController.tableView.isHidden ? nil : searchText,
             reports: viewModel.reports
         )
     }

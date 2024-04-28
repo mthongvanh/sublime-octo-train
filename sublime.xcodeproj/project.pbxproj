@@ -17,6 +17,7 @@
 		4CC539482BDECB6A00DBFD30 /* station_map_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539472BDECB6A00DBFD30 /* station_map_controller.swift */; };
 		4CC5394A2BDECB7700DBFD30 /* station_map_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539492BDECB7700DBFD30 /* station_map_view_controller.swift */; };
 		4CC5394C2BDECBFB00DBFD30 /* station_map_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5394B2BDECBFB00DBFD30 /* station_map_view_model.swift */; };
+		4CC539512BDEF2B100DBFD30 /* report_filter_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539502BDEF2B100DBFD30 /* report_filter_view_controller.swift */; };
 		4CCA18F22BDA37B100A54A84 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CCA18F12BDA37B100A54A84 /* cleanboot_swift */; };
 		4CCA18F72BDAAA2500A54A84 /* sublime_annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA18F62BDAAA2500A54A84 /* sublime_annotation.swift */; };
 		4CCF69502BD5E3FF008A3987 /* sublimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF694F2BD5E3FF008A3987 /* sublimeTests.swift */; };
@@ -74,6 +75,7 @@
 		4CC539472BDECB6A00DBFD30 /* station_map_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_map_controller.swift; sourceTree = "<group>"; };
 		4CC539492BDECB7700DBFD30 /* station_map_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_map_view_controller.swift; sourceTree = "<group>"; };
 		4CC5394B2BDECBFB00DBFD30 /* station_map_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_map_view_model.swift; sourceTree = "<group>"; };
+		4CC539502BDEF2B100DBFD30 /* report_filter_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = report_filter_view_controller.swift; sourceTree = "<group>"; };
 		4CCA18F62BDAAA2500A54A84 /* sublime_annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sublime_annotation.swift; sourceTree = "<group>"; };
 		4CCF69352BD5E3FE008A3987 /* sublime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sublime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CCF694B2BD5E3FF008A3987 /* sublimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sublimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -219,6 +221,7 @@
 		4CCA18FC2BDADEC900A54A84 /* filter */ = {
 			isa = PBXGroup;
 			children = (
+				4CC539502BDEF2B100DBFD30 /* report_filter_view_controller.swift */,
 			);
 			path = filter;
 			sourceTree = "<group>";
@@ -788,6 +791,7 @@
 				4CF7950A2BD6EE4F00EE3212 /* home_view_controller.swift in Sources */,
 				4CF7951F2BD7175D00EE3212 /* water_level_repository.swift in Sources */,
 				4CF7952C2BD7C6A600EE3212 /* water_level_report_mapper.swift in Sources */,
+				4CC539512BDEF2B100DBFD30 /* report_filter_view_controller.swift in Sources */,
 				4CF7951B2BD714BC00EE3212 /* water_level_report_model.swift in Sources */,
 				4CC5393E2BDEC81E00DBFD30 /* reports_view_controller.swift in Sources */,
 				4CF840FB2BD5E666001C2DD7 /* dependency_injector.swift in Sources */,
