@@ -34,7 +34,7 @@ class ReportsViewController: UITableViewController, BaseViewController {
         tableView.delegate = controller
         
         refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(controller, action: #selector(controller.beginRefresh), for: .valueChanged)
+        refreshControl?.addTarget(self, action: #selector(beginRefresh), for: .valueChanged)
         
         tableView?.refreshControl = refreshControl
         
@@ -48,16 +48,22 @@ class ReportsViewController: UITableViewController, BaseViewController {
         }
     }
     
+    @objc func beginRefresh() {
+        Task.init {
+            await controller.beginRefresh()
+        }
+    }
+    
     // base view controller conformance
     typealias T = ReportsViewModel
     
     func onModelUpdate(viewModel: T) {
-//        refreshControl?.endRefreshing()
+        refreshControl?.endRefreshing()
         tableView?.reloadData()
     }
     
     func onModelReady(viewModel: T) {
-//        refreshControl?.endRefreshing()
+        refreshControl?.endRefreshing()
         tableView?.reloadData()
     }
 }
