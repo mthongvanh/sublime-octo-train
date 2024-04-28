@@ -13,7 +13,13 @@ class HomeViewController: UIViewController, BaseViewController {
     
     var viewModel: HomeViewModel
     var tableView: UITableView?
+    var refreshControl: UIRefreshControl?
     var mapView: MKMapView?
+
+    
+    var filterSearchBar = UISearchBar()
+    var reportFilterController = ReportFilterController()
+    var filterResultsTableView = UITableView()
     
     init(viewModel: HomeViewModel) {
         // setup view model
@@ -56,9 +62,29 @@ class HomeViewController: UIViewController, BaseViewController {
             forCellReuseIdentifier: "reportCell"
         )
         
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(beginRefresh), for: .valueChanged)
+        tableView?.refreshControl = refreshControl
+
+        filterSearchBar.delegate = self
+        filterSearchBar.showsCancelButton = true
+        
+        reportFilterController.onSelect = { indexPath in
+            self.viewModel.lastSelectedLocation = self.reportFilterController.reports[indexPath.row]
+        }
+        filterResultsTableView.isHidden = true
+        filterResultsTableView.dataSource = reportFilterController
+        filterResultsTableView.delegate = reportFilterController
+        filterResultsTableView.register(
+            UITableViewCell.self,
+            forCellReuseIdentifier: "reportCell"
+        )
+
         // make sure to add subviews before setting up constraints
         view.addSubview(mapView!)
         view.addSubview(tableView!)
+        view.addSubview(filterSearchBar)
+        view.addSubview(filterResultsTableView)
         
         setupConstraints()
     }
@@ -70,13 +96,26 @@ class HomeViewController: UIViewController, BaseViewController {
                 viewModel.mapHeightFactor
             )
         })
+
+        filterSearchBar.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(mapView!.snp.bottom)
+        }
         
         tableView?.snp.makeConstraints({ make in
             make.leading.trailing.bottom.equalToSuperview()
         })
         
         tableView?.snp.makeConstraints { make in
-            make.top.equalTo(mapView!.snp.bottom)
+            make.top.equalTo(filterSearchBar.snp.bottom)
+        }
+        
+        filterResultsTableView.snp.makeConstraints({ make in
+            make.leading.trailing.bottom.equalToSuperview()
+        })
+        
+        filterResultsTableView.snp.makeConstraints { make in
+            make.top.equalTo(filterSearchBar.snp.bottom)
         }
     }
     
@@ -85,20 +124,31 @@ class HomeViewController: UIViewController, BaseViewController {
     
     func onModelUpdate(viewModel: T) {
         tableView?.reloadData()
+        if let lastSelectedLocation = viewModel.lastSelectedLocation {
+            zoom(report: lastSelectedLocation)
+        }
+
+        reportFilterController.reports = viewModel.filtered
+        filterResultsTableView.reloadData()
     }
     
     func onModelReady(viewModel: T) {
         tableView?.reloadData()
-        let stations = viewModel.getStations()
+        updateStations()
+    }
+    
+    func updateStations(filterText: String? = nil) {
+        let stations = viewModel.getStations(filterText: filterText)
         do {
+            mapView?.removeAnnotations(mapView!.annotations)
             mapView?.addAnnotations(
                 try stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
-                return SublimeMapAnnotation(
-                    title: key.components(separatedBy: CharacterSet(["+"])).first!,
-                    coordinate: value.1,
-                    flowLevel: value.2
-                )
-            }))
+                    return SublimeMapAnnotation(
+                        title: key.components(separatedBy: CharacterSet(["+"])).first!,
+                        coordinate: value.1,
+                        flowLevel: value.2
+                    )
+                }))
         } catch {
             debugPrint(error)
         }
@@ -109,7 +159,7 @@ class HomeViewController: UIViewController, BaseViewController {
         setRegion(coords: coords)
     }
     
-    /// sets zoom region with visible distance spanning a default 20km
+    /// sets zoom region with visible distance spanning a default 10km
     func setRegion(coords: CLLocationCoordinate2D, meters: Double = 10000) {
         mapView?.setRegion(
             MKCoordinateRegion(
@@ -119,6 +169,13 @@ class HomeViewController: UIViewController, BaseViewController {
             ),
             animated: true
         )
+    }
+    
+    @objc func beginRefresh() {
+        Task.init {
+            await viewModel.prepareData()
+            refreshControl?.endRefreshing()
+        }
     }
 }
 
@@ -156,7 +213,7 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        zoom(report: viewModel.reports[indexPath.row])
+        viewModel.lastSelectedLocation = viewModel.reports[indexPath.row]
     }
 }
 
@@ -184,8 +241,51 @@ extension HomeViewController: MKMapViewDelegate {
             default:
                 view.markerTintColor = UIColor.yellow
             }
-        
+            
         }
         return annotationView
+    }
+}
+
+extension HomeViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterResultsTableView.isHidden = (searchBar.text?.count ?? 0) < 3
+        viewModel.filter(text: searchText)
+        if (filterResultsTableView.isHidden) {
+            updateStations()
+        } else {
+            updateStations(filterText: searchText)
+        }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+}
+
+class ReportFilterController: NSObject, UITableViewDelegate, UITableViewDataSource {
+    
+    var reports = [WaterLevelReport]()
+    
+    var onSelect: ((IndexPath) -> Void)?
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        reports.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "reportCell", for: indexPath)
+        let model = reports[indexPath.row]
+        var content = cell.defaultContentConfiguration()
+        content.text = "\(model.waterbody) @ \(model.station)"
+        content.secondaryText = "flow: \(model.speed) m^3/s, depth: \(model.depth) cm"
+        cell.contentConfiguration = content
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let onSelect = onSelect {
+            onSelect(indexPath)
+        }
     }
 }

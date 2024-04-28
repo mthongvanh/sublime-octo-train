@@ -33,7 +33,7 @@
 		4CF841002BD5E666001C2DD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4CF840F52BD5E666001C2DD7 /* Main.storyboard */; };
 		4CF841012BD5E666001C2DD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CF840F72BD5E666001C2DD7 /* Assets.xcassets */; };
 		4CF8410A2BD5E9CD001C2DD7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF841092BD5E9CD001C2DD7 /* AppDelegate.swift */; };
-		4CF8410C2BD6A598001C2DD7 /* boostrap_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF8410B2BD6A598001C2DD7 /* boostrap_view_model.swift */; };
+		4CF8410C2BD6A598001C2DD7 /* bootstrap_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF8410B2BD6A598001C2DD7 /* bootstrap_view_model.swift */; };
 		53EC04B228F845A4B46DDED7 /* Pods_sublime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91302214C9670F359C7BE9C4 /* Pods_sublime.framework */; };
 		92704E53C606A0F4A2E1ED71 /* Pods_sublimeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B249993F96E11B17FDE17C2 /* Pods_sublimeTests.framework */; };
 /* End PBXBuildFile section */
@@ -86,7 +86,7 @@
 		4CF840F42BD5E666001C2DD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4CF840F72BD5E666001C2DD7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4CF841092BD5E9CD001C2DD7 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4CF8410B2BD6A598001C2DD7 /* boostrap_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = boostrap_view_model.swift; sourceTree = "<group>"; };
+		4CF8410B2BD6A598001C2DD7 /* bootstrap_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bootstrap_view_model.swift; sourceTree = "<group>"; };
 		644530DA5A4B192BDCC4E9EE /* Pods-sublime.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sublime.release.xcconfig"; path = "Target Support Files/Pods-sublime/Pods-sublime.release.xcconfig"; sourceTree = "<group>"; };
 		8073CBF8AAB7E6E9415CA14F /* Pods-sublime-sublimeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sublime-sublimeUITests.release.xcconfig"; path = "Target Support Files/Pods-sublime-sublimeUITests/Pods-sublime-sublimeUITests.release.xcconfig"; sourceTree = "<group>"; };
 		91302214C9670F359C7BE9C4 /* Pods_sublime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_sublime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,6 +128,7 @@
 		4CCA18F32BDA859E00A54A84 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				4CCA18FC2BDADEC900A54A84 /* filter */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -161,6 +162,13 @@
 			children = (
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		4CCA18FC2BDADEC900A54A84 /* filter */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = filter;
 			sourceTree = "<group>";
 		};
 		4CCF692C2BD5E3FE008A3987 = {
@@ -397,7 +405,7 @@
 			isa = PBXGroup;
 			children = (
 				4CF840EC2BD5E666001C2DD7 /* bootstrap_view_controller.swift */,
-				4CF8410B2BD6A598001C2DD7 /* boostrap_view_model.swift */,
+				4CF8410B2BD6A598001C2DD7 /* bootstrap_view_model.swift */,
 			);
 			path = bootstrap;
 			sourceTree = "<group>";
@@ -719,7 +727,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4CF8410C2BD6A598001C2DD7 /* boostrap_view_model.swift in Sources */,
+				4CF8410C2BD6A598001C2DD7 /* bootstrap_view_model.swift in Sources */,
 				4C01201D2BD90EEE002744C9 /* get_water_levels_use_case.swift in Sources */,
 				4C01201B2BD7E9E8002744C9 /* water_level_report_arso.swift in Sources */,
 				4CF7950A2BD6EE4F00EE3212 /* home_view_controller.swift in Sources */,

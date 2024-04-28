@@ -14,6 +14,7 @@ class HomeViewModel: ViewModel<HomeViewModel> {
     var getWaterLevels: GetWaterLevelsUseCase
     
     var reports = [WaterLevelReport]()
+    var filtered = [WaterLevelReport]()
     
     var ljubljana = CLLocationCoordinate2D(
         latitude: CLLocationDegrees(
@@ -26,6 +27,15 @@ class HomeViewModel: ViewModel<HomeViewModel> {
     
     var mapHeightFactor = 0.35
     var mapZoomLevel = 0.5
+    var lastSelectedLocation: WaterLevelReport? {
+        didSet {
+            guard let update = onModelUpdate else {
+                return
+            }
+            
+            update(self)
+        }
+    }
     
     func initialLocation() -> CLLocationCoordinate2D {
         ljubljana
@@ -69,6 +79,8 @@ class HomeViewModel: ViewModel<HomeViewModel> {
             reports = try await water.getWaterLevels().map<WaterLevelReport>({ model in
                 model.toEntity()
             })
+            reports.sort { $0.waterbody < $1.waterbody }
+            
             DispatchQueue.main.async {
                 guard let modelReady = self.onModelReady else {
                     self.updateLoadState(loadState: .error)
@@ -83,11 +95,12 @@ class HomeViewModel: ViewModel<HomeViewModel> {
         }
     }
     
-    func getStations() -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
+    func getStations(filterText: String? = nil) -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
         var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
         for report in reports {
             let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
-            if (!stations.keys.contains(key)) {
+            let matchesFilter = filterText == nil ? true : !(key.range(of: filterText!.trimmingCharacters(in: CharacterSet.whitespaces), options: [.caseInsensitive])?.isEmpty ?? true)
+            if (!stations.keys.contains(key) && matchesFilter) {
                 let location = CLLocationCoordinate2D(
                     latitude: CLLocationDegrees(
                         floatLiteral: report.latitude
@@ -104,5 +117,36 @@ class HomeViewModel: ViewModel<HomeViewModel> {
             }
         }
         return stations
+    }
+    
+    func filter(text: String) {
+        // Strip out all the leading and trailing spaces.
+        let whitespaceCharacterSet = CharacterSet.whitespaces
+        let strippedString = text.trimmingCharacters(in: whitespaceCharacterSet)
+        
+        filtered = reports.compactMap({ report in
+            if (report.waterbody.range(
+                of: strippedString,
+                options: [.caseInsensitive]
+            )?.isEmpty == false
+                || report.station.range(
+                    of: strippedString,
+                    options: [.caseInsensitive]
+                )?.isEmpty == false)
+            {
+                return report
+            } else {
+                return nil
+            }
+        })
+        
+        DispatchQueue.main.async {
+            guard let update = self.onModelUpdate else {
+                return;
+            }
+            
+            update(self)
+        }
+        
     }
 }
