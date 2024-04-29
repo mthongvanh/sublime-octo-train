@@ -1,16 +1,20 @@
 PODS:
   - SnapKit (5.7.1)
+  - SwiftSoup (2.7.2)
 
 DEPENDENCIES:
   - SnapKit
+  - SwiftSoup
 
 SPEC REPOS:
   trunk:
     - SnapKit
+    - SwiftSoup
 
 SPEC CHECKSUMS:
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
+  SwiftSoup: 4164c6bd8af69acd119c23fb36906975a60d71bb
 
-PODFILE CHECKSUM: bcad86a4e24111505a6fbe35cfd23f1cdbc7361f
+PODFILE CHECKSUM: 14a9f7d442dd2fe78d3ada0e4188275b9ca3ff5c
 
 COCOAPODS: 1.15.2

@@ -62,7 +62,27 @@ class HomeViewController: UIViewController, BaseViewController {
         filterSearchBar.showsCancelButton = true
         
         reportsViewController.controller.onSelect = { (indexPath, report) in
-            self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
+            if (report.station == self.stationMapViewController.controller.viewModel.lastSelectedLocation?.station) {
+                do {
+                    let vm = StationDetailViewModel(
+                        historicalData: try AppServiceLocator.shared.get(
+                            serviceType: GetHistoricalDataUseCase.self
+                        )
+                    )
+                    let controller = StationDetailController(viewModel: vm)
+                    
+                    self.navigationController?.pushViewController(
+                        StationDetailViewController(
+                            controller: controller
+                        ),
+                        animated: true
+                    )
+                } catch {
+                    debugPrint(error)
+                }
+            } else {
+                self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
+            }
         }
         
         filterViewController.tableView.isHidden = true

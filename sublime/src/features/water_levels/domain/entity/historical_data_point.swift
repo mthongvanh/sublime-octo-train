@@ -6,3 +6,35 @@
 //
 
 import Foundation
+
+struct HistoricalDataPoint: Codable {
+    
+    /// water measuring station code
+    var stationCode: String
+    
+    /// date of report
+    var recordDate: String
+    
+    /// water depth in centimeters
+    var depth: Int
+    
+    /// water flow speed in meters per second
+    var speed: Double
+    
+    /// water temperature in celsius
+    var temperature: Double
+    
+    init(
+        stationCode: String,
+        recordDate: String,
+        depth: Int,
+        speed: Double,
+        temperature: Double
+    ) {
+        self.stationCode = stationCode
+        self.recordDate = recordDate
+        self.depth = depth
+        self.speed = speed
+        self.temperature = temperature
+    }
+}
