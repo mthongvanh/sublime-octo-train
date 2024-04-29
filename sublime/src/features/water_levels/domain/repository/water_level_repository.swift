@@ -8,7 +8,12 @@
 import Foundation
 
 protocol WaterLevelRepository {
-    func getWaterLevels(span: ObservationSpan) async throws -> [WaterLevelReport]
+    func getWaterLevels() async throws -> [WaterLevelReport]
+    
+    func getHistoricalData(
+        stationCode: String,
+        span: ObservationSpan
+    ) async throws -> [HistoricalDataPoint]
 }
 
 /// #ObservationSpan
@@ -21,7 +26,7 @@ enum ObservationSpan {
     /// Results spanning one day
     case oneDay
     
-    /// Reports spanning the last sevent days
+    /// Reports spanning the last seven days
     case sevenDays
     
     /// Reports spanning the last thirty days

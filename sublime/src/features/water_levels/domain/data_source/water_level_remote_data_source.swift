@@ -9,4 +9,9 @@ import Foundation
 
 protocol WaterLevelRemoteDataSource {
     func getWaterLevels() async throws -> [WaterLevelReportModel]
+    
+    func getHistoricalData(
+        stationCode: String,
+        span: ObservationSpan
+    ) async throws -> [HistoricalDataPointModel]
 }

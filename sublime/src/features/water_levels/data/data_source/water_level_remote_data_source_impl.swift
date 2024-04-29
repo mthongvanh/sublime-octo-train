@@ -6,8 +6,59 @@
 //
 
 import Foundation
+import SwiftSoup
 
 struct WaterLevelRemoteDataSourceImpl: WaterLevelRemoteDataSource {
+    func getWaterLevels() async throws -> [WaterLevelReportModel] {
+        return try await getRecentLevels()
+    }
+    
+    func getHistoricalData(stationCode: String, span: ObservationSpan) async throws -> [HistoricalDataPointModel] {
+        
+        var days: Int
+        switch span {
+        case .sevenDays:
+            days = 7
+        case .thirtyDays:
+            days = 30
+        default:
+            days = 1
+        }
+        
+        let (data, _) = try await httpClient.data(
+            from: waterLevelAPI.span(
+                stationCode: stationCode,
+                days: days
+            )
+        )
+        
+        var dataPoints = [HistoricalDataPointModel]()
+        
+        let parser = ARSOWaterLevelParser()
+        guard let htmlString = String(data: data, encoding: .utf8) else {
+            throw(Exception.Error(type: .IOException, Message: "Error converting ARSO html strin"))
+        }
+        
+        let items = try parser.parse(html: htmlString)
+        
+        for (text, _) in items {
+            let waterData = text.components(separatedBy: .whitespaces)
+            if (waterData.count == 5 && waterData[0].range(of: ".2024") != nil) {
+                dataPoints.append(
+                    HistoricalDataPointModel(
+                        stationCode: stationCode,
+                        recordDate: "\(waterData[0]) \(waterData[1])",
+                        depth: Int(waterData[2]) ?? 0,
+                        speed: Double(waterData[3]) ?? 0.0,
+                        temperature: Double(waterData[4]) ?? 0.0
+                    )
+                )
+            }
+        }
+        
+        return dataPoints
+    }
+    
     
     fileprivate let httpClient = URLSession(configuration: URLSessionConfiguration.default)
     var waterLevelAPI: WaterLevelAPI
@@ -16,7 +67,7 @@ struct WaterLevelRemoteDataSourceImpl: WaterLevelRemoteDataSource {
         self.waterLevelAPI = waterLevelAPI
     }
     
-    func getWaterLevels() async throws -> [WaterLevelReportModel] {
+    private func getRecentLevels() async throws -> [WaterLevelReportModel] {
         let (data, _) = try await httpClient.data(from: waterLevelAPI.latest)
         let xmlParser = XMLParser(data: data)
         let parserDelegate = WaterLevelXMLParser()
@@ -25,7 +76,7 @@ struct WaterLevelRemoteDataSourceImpl: WaterLevelRemoteDataSource {
         guard parserDelegate.error == nil else {
             throw URLError(URLError.badServerResponse)
         }
-
+        
         do {
             let arsoReports = try parserDelegate.reports.map<WaterLevelReport>({ json in
                 WaterLevelReportARSO.fromJSON(json: json).toModel()
@@ -35,7 +86,7 @@ struct WaterLevelRemoteDataSourceImpl: WaterLevelRemoteDataSource {
             print(error)
             throw error
         }
-
+        
     }
 }
 
@@ -47,13 +98,13 @@ class WaterLevelXMLParser: NSObject, XMLParserDelegate {
     public var reports = [[String: Any]]()
     public var error: Error?
     
-//    func parserDidStartDocument(_ parser: XMLParser) {
-//        print("Start of the document")
-//        print("Line number: \(parser.lineNumber)")
-//    }
-
+    //    func parserDidStartDocument(_ parser: XMLParser) {
+    //        print("Start of the document")
+    //        print("Line number: \(parser.lineNumber)")
+    //    }
+    
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
-//        debugPrint("didStartElement: \(elementName) - attributes \(attributeDict) - qualifiedName \(qName ?? "none")")
+        //        debugPrint("didStartElement: \(elementName) - attributes \(attributeDict) - qualifiedName \(qName ?? "none")")
         currentText = ""
         if (!attributeDict.values.isEmpty) {
             currenAttributes = attributeDict
@@ -64,7 +115,7 @@ class WaterLevelXMLParser: NSObject, XMLParserDelegate {
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if (string.trimmingCharacters(in: .whitespacesAndNewlines) != "") {
-//            print(string)
+            //            print(string)
             currentText.append(string)
         }
     }
@@ -87,8 +138,50 @@ class WaterLevelXMLParser: NSObject, XMLParserDelegate {
     }
     
     func parserDidEndDocument(_ parser: XMLParser) {
-//        debugPrint("End of the document")
-//        debugPrint("Line number: \(parser.lineNumber)")
+        //        debugPrint("End of the document")
+        //        debugPrint("Line number: \(parser.lineNumber)")
         finished = true
+    }
+}
+
+class ARSOWaterLevelParser {
+    
+    typealias Item = (text: String, html: String)
+    
+    // current document
+    var document: Document = Document.init("")
+    
+    
+    //Parse CSS selector
+    func parse(html: String) throws -> [Item] {
+        do {
+            // parse it into a Document
+            document = try SwiftSoup.parse(html)
+            // parse css query
+            let css = "tr"
+            
+            //empty old items
+            var items = [Item]()
+            // firn css selector
+            let elements: Elements = try document.select(css)
+            
+            let date = Calendar.current.dateComponents([.year], from: Date.now)
+            
+            for element in elements {
+                let text = try element.text()
+                let matchString = ".\(date.year ?? 1999) "
+                let match = text.range(of: matchString)
+                if (match != nil) {
+                    let html = try element.outerHtml()
+                    items.append(Item(text: text, html: html))
+                } else {
+                    debugPrint("not found \(text)")
+                }
+            }
+
+            return items
+        } catch let error {
+            throw error
+        }
     }
 }

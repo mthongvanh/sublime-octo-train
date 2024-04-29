@@ -17,7 +17,7 @@ class DependencyInjector {
         let remoteDataSource = WaterLevelRemoteDataSourceImpl(
             waterLevelAPI: WaterLevelAPI(
                 environment: .development,
-                baseURL: "https://arso.gov.si")
+                baseURL: "https://www.arso.gov.si")
         )
         
         let repo = WaterLevelRepositoryImpl(
@@ -41,6 +41,20 @@ class DependencyInjector {
             type: GetWaterLevelsUseCase.self,
             identifier: nil
         )
+        
+        try serviceLocator.registerFactory(
+            instantiator: { parameters in
+                GetHistoricalDataUseCase(
+                    repo: try serviceLocator.get(
+                        serviceType: WaterLevelRepository.self,
+                    identifier: nil,
+                    parameters: nil
+                )
+            )},
+            type: GetHistoricalDataUseCase.self,
+            identifier: nil
+        )
+        
     }
     
     func registerPages(_ serviceLocator: ServiceLocator) throws {
