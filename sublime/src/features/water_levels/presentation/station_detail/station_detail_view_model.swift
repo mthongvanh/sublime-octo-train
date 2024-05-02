@@ -15,10 +15,10 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
     var getHistoricalDataUseCase: GetHistoricalDataUseCase
     
     var dataPoints = [HistoricalDataPoint]()
-    var dataPointsParsed: [String:[String:[String: HistoricalDataPoint]]]?
+    //    var dataPointsParsed: [String:[String:[String: HistoricalDataPoint]]]?
     var chartItems = [ChartItemModel]()
     var dataType = WaterLevelValueType.depth
-    var dataSpan = ObservationSpan.thirtyDays
+    var dataSpan = ObservationSpan.sevenDays
     
     init(
         stationReport: WaterLevelReport,
@@ -37,32 +37,17 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
     override func prepareData() async {
         updateLoadState(loadState: .loading)
         var hasData = false
-        var result: UseCaseResult<[HistoricalDataPoint]>
         do {
-            let span = ObservationSpan.thirtyDays
-            
-            result = try await getHistoricalDataUseCase.execute(
-                params: (
-                    span,
-                    stationReport.stationCode
-                )
+            hasData = try await fetchData(
+                span: dataSpan,
+                dataType: dataType
             )
-            switch result {
-            case let .success(dataPoints):
-                self.dataPoints = dataPoints
-                hasData = try await filterWaterReports(
-                    span: dataSpan,
-                    dataType: dataType
-                )
-            case let .failure(error):
-                throw(error)
-            }
         } catch let error {
             debugPrint(error)
-            updateLoadState(loadState: .error)
+            loadState = .error
         }
         
-        updateLoadState(loadState: hasData ? .ready : .readyNoData)
+        loadState = hasData ? .ready : .readyNoData
         
         if let onModelReady = onModelReady {
             DispatchQueue.main.async {
@@ -71,24 +56,54 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
         }
     }
     
-    func filterWaterReports(span: ObservationSpan, dataType: WaterLevelValueType) async throws -> Bool {
-        let dp = dataPoints.sorted(by: { a, b in
+    func fetchData(span: ObservationSpan, dataType: WaterLevelValueType) async throws -> Bool {
+        var hasData = false
+        let result = try await getHistoricalDataUseCase.execute(
+            params: (
+                span,
+                stationReport.stationCode
+            )
+        )
+        switch result {
+        case let .success(dataPoints):
+            self.dataPoints = dataPoints
+            hasData = try await filterWaterReports(
+                stationData: dataPoints,
+                span: dataSpan,
+                dataType: dataType
+            )
+        case let .failure(error):
+            throw(error)
+        }
+        return hasData
+    }
+    
+    func filterWaterReports(stationData: [HistoricalDataPoint]? = nil, span: ObservationSpan, dataType: WaterLevelValueType) async throws -> Bool {
+        
+        dataSpan = span
+        self.dataType = dataType
+        
+        let dp = (stationData ?? dataPoints).sorted(by: { a, b in
             a.date.timeIntervalSince1970 > b.date.timeIntervalSince1970
         })
+        
+        var updatedDataPoints = [HistoricalDataPoint]()
         for dataPoint in dp {
-            if (dataPoint.depth > 0) {
-                self.dataPoints.append(dataPoint)
-            } else {
+            if (dataPoint.depth == 0 && dataPoint.speed == 0 && dataPoint.temperature == 0) {
                 debugPrint("found empty data point \(dataPoint)")
+            } else {
+                updatedDataPoints.append(dataPoint)
             }
         }
         
-        dataPointsParsed = organizeData(historicalData: self.dataPoints)
-        let models = try generateChartItemModels(dataPointMap: dataPointsParsed!, span: span, valueType: .depth)
+        //        self.dataPoints = updatedDataPoints
+        
+        let dataPointsParsed = organizeData(historicalData: updatedDataPoints)
+        let models = try generateChartItemModels(dataPointMap: dataPointsParsed, span: span, valueType: dataType)
         chartItems.removeAll()
         chartItems.append(contentsOf: models)
         
-        return !self.dataPoints.isEmpty
+        return !updatedDataPoints.isEmpty
     }
     
     func organizeData(historicalData: [HistoricalDataPoint]) -> [String:[String:[String: HistoricalDataPoint]]] {
@@ -126,24 +141,72 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
         return monthDayTimeMap
     }
     
+    fileprivate func addChartItemModel(
+        _ year: Int,
+        _ month: String,
+        _ day: String,
+        _ valueType: WaterLevelValueType,
+        _ yAxisValue: Double,
+        _ models: inout [ChartItemModel],
+        hour: Int? = nil,
+        minute: Int? = nil,
+        dayMax: Double? = nil
+    ) {
+        let components = DateComponents(
+            year: year,
+            month: Int(month),
+            day: Int(day),
+            hour: hour,
+            minute: minute
+        )
+        
+        let date = Calendar.current.date(
+            from: components
+        )!
+        
+        let model = ChartItemModel(
+            xAxisIdentifier: date,
+            yAxisValue: yAxisValue,
+            yAxisMax: dayMax ?? yAxisValue
+        )
+        
+        models.append(model)
+    }
+    
     func generateChartItemModels(
         dataPointMap: [String:[String:[String:HistoricalDataPoint]]],
         span: ObservationSpan,
         valueType: WaterLevelValueType
     ) throws -> [ChartItemModel] {
         
-        let addMinMax = span == ObservationSpan.sevenDays || span == ObservationSpan.thirtyDays;
-        
         var models = [ChartItemModel]()
-        for (month, days) in dataPointMap {
+        let sortedMonthKeys = dataPointMap.keys.sorted()
+        try sortedMonthKeys.indices.forEach<Array<Dictionary<String, [String : [String : HistoricalDataPoint]]>.Keys.Element>> { index in
+            let monthKey = sortedMonthKeys[index]
+            guard let days = dataPointMap[monthKey] else {
+                return
+            }
             
-            for (day, times) in days {
+            let sortedDayKeys = days.keys.sorted()
+            try sortedDayKeys.indices.forEach<Array<Dictionary<String, [String : HistoricalDataPoint]>.Keys.Element>> { index in
+                let dayKey = sortedDayKeys[index]
+                guard let times = days[dayKey] else {
+                    return
+                }
                 
                 var dayMin = Double.infinity
                 var dayMax = 0.0
                 var year = 2024
                 
-                for (_, dataPoint) in times {
+                /// either generate chart items for each data point in a day for single-day spans, or generate
+                /// them using the day's minimum and maximum values
+                let sortedTimeKeys = times.keys.sorted()
+                try sortedTimeKeys.indices.forEach<Array<Dictionary<String, HistoricalDataPoint>.Keys.Element>> { index in
+                    let timeKey = sortedTimeKeys[index]
+                    guard let dataPoint = times[timeKey] else {
+                        return
+                    }
+                    
                     var value: Double
                     switch valueType {
                     case .depth:
@@ -157,43 +220,64 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
                     dayMin = Swift.min(dayMin, value)
                     dayMax = Swift.max(dayMax, value)
                     year = dataPoint.components().year!
+                    
+                    /// since the span is only one day, we need several chart items to create a chart
+                    if span == .oneDay {
+                        let hourMinute = timeKey.components(separatedBy: .punctuationCharacters)
+                        addChartItemModel(
+                            year,
+                            monthKey,
+                            dayKey,
+                            valueType,
+                            value,
+                            &models,
+                            hour: hourMinute.first != nil ? Int(hourMinute.first!) : nil,
+                            minute: hourMinute.last != nil ? Int(hourMinute.last!) : nil
+                        )
+                    }
                 }
                 
-                let components = DateComponents(
-                    year: year,
-                    month: Int(month),
-                    day: Int(day)
-                )
-                
-                let date = Calendar.current.date(
-                    from: components
-                )!
-                
-                var yAxisValue: Double
-                let lastTimeKey = times.keys.sorted().last!
-                let mostRecentReport = times[lastTimeKey]
-                
-                switch valueType {
-                case .depth:
-                    yAxisValue = Double(mostRecentReport?.depth ?? 0)
-                case .speed:
-                    yAxisValue = mostRecentReport?.speed ?? 0.0
-                case .temperature:
-                    yAxisValue = mostRecentReport?.temperature ?? 0.0
+                /// since the span covers several days, we only take the day's min and max values for less
+                /// noisy charts
+                if span == .sevenDays || span == .thirtyDays {
+                    
+                    var yAxisValue: Double
+                    let lastTimeKey = times.keys.sorted().last!
+                    let mostRecentReport = times[lastTimeKey]
+                    
+                    switch valueType {
+                    case .depth:
+                        yAxisValue = Double(mostRecentReport?.depth ?? 0)
+                    case .speed:
+                        yAxisValue = mostRecentReport?.speed ?? 0.0
+                    case .temperature:
+                        yAxisValue = mostRecentReport?.temperature ?? 0.0
+                    }
+                    
+                    addChartItemModel(
+                        year,
+                        monthKey,
+                        dayKey,
+                        valueType,
+                        yAxisValue,
+                        &models,
+                        dayMax: dayMax
+                    )
                 }
-                
-                let model = ChartItemModel(
-                    xAxisIdentifier: date,
-                    yAxisValue: yAxisValue,
-                    yAxisMin: addMinMax ? dayMin : nil,
-                    yAxisMax: addMinMax ? dayMax : nil
-                )
-                
-                models.append(model)
             }
             
         }
         return models
+    }
+    
+    func availableSpanLengths() -> [ObservationSpan] {
+        return ObservationSpan.allCases.compactMap { span in
+            if span != .latest {
+                return span
+            } else {
+                return nil
+            }
+        }
     }
 }
 
@@ -203,12 +287,12 @@ struct ChartItemModel: Identifiable {
     var xAxisIdentifier: Date
     
     var yAxisValue: Double
-    var yAxisMin: Double?
+    //    var yAxisMin: Double?
     var yAxisMax: Double?
 }
 
-enum WaterLevelValueType {
-    case speed
-    case depth
-    case temperature
+enum WaterLevelValueType: String, CaseIterable {
+    case depth = "Depth"
+    case speed = "Speed"
+    case temperature = "Temperature"
 }

@@ -46,6 +46,17 @@ extension WaterLevelReport {
             longitude: CLLocationDegrees(floatLiteral: longitude)
         )
     }
+    
+    public func valueForType(type: WaterLevelValueType) -> Double {
+        switch type {
+        case .depth:
+            return depth
+        case .speed:
+            return speed
+        case .temperature:
+            return temperature
+        }
+    }
 }
 
 enum WaterFlowLevel: String {

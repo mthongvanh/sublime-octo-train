@@ -18,17 +18,17 @@ protocol WaterLevelRepository {
 
 /// #ObservationSpan
 /// Span of time over which the reports should cover
-enum ObservationSpan {
+enum ObservationSpan: Int, CaseIterable {
     
     /// Only the most recent data available
-    case latest
+    case latest = 0
     
     /// Results spanning one day
-    case oneDay
+    case oneDay = 1
     
     /// Reports spanning the last seven days
-    case sevenDays
+    case sevenDays = 7
     
     /// Reports spanning the last thirty days
-    case thirtyDays
+    case thirtyDays = 30
 }
