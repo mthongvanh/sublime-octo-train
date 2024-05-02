@@ -90,13 +90,11 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
         var updatedDataPoints = [HistoricalDataPoint]()
         for dataPoint in dp {
             if (dataPoint.depth == 0 && dataPoint.speed == 0 && dataPoint.temperature == 0) {
-                debugPrint("found empty data point \(dataPoint)")
+//                debugPrint("found empty data point \(dataPoint)")
             } else {
                 updatedDataPoints.append(dataPoint)
             }
         }
-        
-        //        self.dataPoints = updatedDataPoints
         
         let dataPointsParsed = organizeData(historicalData: updatedDataPoints)
         let models = try generateChartItemModels(dataPointMap: dataPointsParsed, span: span, valueType: dataType)
@@ -107,13 +105,6 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
     }
     
     func organizeData(historicalData: [HistoricalDataPoint]) -> [String:[String:[String: HistoricalDataPoint]]] {
-        /// 30-day chart will show range for a day
-        /// 7-day chart will show range for a day
-        ///     - chart item model will have min and max
-        ///
-        /// 1-day chart will not show a range, only data points
-        ///     - chart itme model wil not have a min-max
-        
         var monthDayTimeMap = [String:[String:[String: HistoricalDataPoint]]]()
         
         for dataPoint in historicalData {
@@ -287,7 +278,6 @@ struct ChartItemModel: Identifiable {
     var xAxisIdentifier: Date
     
     var yAxisValue: Double
-    //    var yAxisMin: Double?
     var yAxisMax: Double?
 }
 

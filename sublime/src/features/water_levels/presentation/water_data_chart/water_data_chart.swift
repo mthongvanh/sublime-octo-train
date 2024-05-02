@@ -57,7 +57,7 @@ struct water_data_chart: View {
                         .foregroundStyle(.gray)
                         .interpolationMethod(.catmullRom)
                     }
-                    let average = valueForDataType(dataType: dataPoints.dataType)
+                    let average = dataPoints.lastReport.valueForType(type: dataPoints.dataType)
                     RuleMark(
                         y: .value("Average", average)
                     )
@@ -73,9 +73,6 @@ struct water_data_chart: View {
                     }
                 }
                 .chartXAxis(.hidden)
-//                .chartYAxis {
-//                    AxisMarks(values: .automatic(desiredCount: 10))
-//                }
                 .chartYScale(domain: [dataPoints.minMax.0, dataPoints.minMax.1])
                 .padding(.vertical)
                 
@@ -96,31 +93,10 @@ struct water_data_chart: View {
         }
         return dataValueDescription
     }
-    
-    func valueForDataType(dataType: WaterLevelValueType) -> Double {
-        var average: Double
-        switch dataPoints.dataType {
-        case .depth:
-            average = Double(dataPoints.lastReport.depth)
-        case .speed:
-            average = dataPoints.lastReport.speed
-        case .temperature:
-            average = dataPoints.lastReport.temperature
-        }
-        return average
-    }
 }
 
 #Preview {
     water_data_chart(dataPoints: WaterChartData(data: [
-        //        ChartItemModel(xAxisIdentifier: Date.now, yAxisValue: 1.0),
-        //
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 1 * (60 * 60 * 30), since: Date.now), yAxisValue: 1.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 2 * (60 * 60 * 30), since: Date.now), yAxisValue: 2.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 3 * (60 * 60 * 30), since: Date.now), yAxisValue: 3.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 4 * (60 * 60 * 30), since: Date.now), yAxisValue: 4.0),
-        
-        
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 1 * (60 * 60 * 30), since: Date.now), yAxisValue: 1.0, yAxisMax: 0.1),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 2 * (60 * 60 * 30), since: Date.now), yAxisValue: 2.0, yAxisMax: 5.0),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 3 * (60 * 60 * 30), since: Date.now), yAxisValue: 3.0, yAxisMax: 5.0),
@@ -129,10 +105,6 @@ struct water_data_chart: View {
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 6 * (60 * 60 * 30), since: Date.now), yAxisValue: 3.0, yAxisMax: 3.0),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 7 * (60 * 60 * 30), since: Date.now), yAxisValue: 1.0, yAxisMax: 1.0),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 8 * (60 * 60 * 30), since: Date.now), yAxisValue: 2.0, yAxisMax: 2.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 9 * (60 * 60 * 30), since: Date.now), yAxisValue: 3.0, yAxisMin: 3.0, yAxisMax: 3.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 10 * (60 * 60 * 30), since: Date.now), yAxisValue: 1.0, yAxisMin: 1.0, yAxisMax: 1.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 11 * (60 * 60 * 30), since: Date.now), yAxisValue: 2.0, yAxisMin: 2.0, yAxisMax: 2.0),
-        //        ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 13 * (60 * 60 * 30), since: Date.now), yAxisValue: 3.0, yAxisMin: 3.0, yAxisMax: 3.0),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 13 * (60 * 60 * 30), since: Date.now), yAxisValue: 4.0, yAxisMax: 4.0)
         
     ], lastReport: WaterLevelReport(waterbody: "baca", waterType: "river", station: "baca station", stationCode: "1234", latitude: 234.234234, longitude: 342.24143, dateString: "24.4.2024", speed: 2.3, depth: 95, temperature: 5.5, flow: "rising"), dataType: WaterLevelValueType.depth))
