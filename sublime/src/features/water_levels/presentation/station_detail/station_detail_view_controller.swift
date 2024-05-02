@@ -50,13 +50,14 @@ class StationDetailViewController: UIViewController, BaseViewController {
         do {
             view.backgroundColor = UIColor.systemBackground
             
-            /// setup data type picker
-            dataTypeControl = try buildDataTypePicker()
-            view.addSubview(dataTypeControl!)
-            dataTypeControl!.snp.makeConstraints { make in
-                make.top.equalToSuperview { superView in
-                    superView.snp_topMargin
-                }
+            /// setup the main content stack view
+            let contentStack = UIStackView()
+            contentStack.axis = .vertical
+            contentStack.spacing = 20
+            
+            view.addSubview(contentStack)
+            contentStack.snp.makeConstraints { make in
+                make.top.equalTo(view.snp_topMargin)
                 make.leading.equalToSuperview { superView in
                     superView.snp.leadingMargin
                 }
@@ -64,36 +65,21 @@ class StationDetailViewController: UIViewController, BaseViewController {
                     superView.snp.trailingMargin
                 }
             }
+            
+            /// setup data type picker
+            dataTypeControl = try buildDataTypePicker()
             
             /// setup chart container
             chartContainer.isSkeletonable = true
             chartContainer.showGradientSkeleton(delay: 0.4)
             chartContainer.skeletonCornerRadius = 10
             
-            view.addSubview(chartContainer)
-            chartContainer.snp.makeConstraints { make in
-                make.top.equalTo(dataTypeControl!.snp.bottom).offset(20)
-                make.leading.equalToSuperview { view in
-                    view.snp.leadingMargin
-                }
-                make.trailing.equalToSuperview { view in
-                    view.snp.trailingMargin
-                }
-                make.height.equalTo(view.snp.height).multipliedBy(0.33)
-            }
-            
             /// setup data type picker
             observationSpanControl = try buildObservationSpanPicker()
-            view.addSubview(observationSpanControl!)
-            observationSpanControl!.snp.makeConstraints { make in
-                make.top.equalTo(chartContainer.snp.bottom).offset(20)
-                make.leading.equalToSuperview { superView in
-                    superView.snp.leadingMargin
-                }
-                make.trailing.equalToSuperview { superView in
-                    superView.snp.trailingMargin
-                }
-            }
+
+            contentStack.addArrangedSubview(dataTypeControl!)
+            contentStack.addArrangedSubview(chartContainer)
+            contentStack.addArrangedSubview(observationSpanControl!)
         } catch {
             debugPrint(error)
         }
@@ -189,8 +175,11 @@ class StationDetailViewController: UIViewController, BaseViewController {
     
     func onModelUpdate(viewModel: StationDetailViewModel) {
         if viewModel.loading {
-//            chartContainer.showGradientSkeleton(delay: 0.4)
-            chartContainer.showAnimatedGradientSkeleton(animation: SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topLeftBottomRight))
+            chartContainer.showAnimatedGradientSkeleton(
+                animation: SkeletonAnimationBuilder().makeSlidingAnimation(
+                    withDirection: .topLeftBottomRight
+                )
+            )
         } else {
             chartContainer.hideSkeleton()
             setupChart()
