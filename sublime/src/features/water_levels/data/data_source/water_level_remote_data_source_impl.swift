@@ -108,6 +108,7 @@ class WaterLevelXMLParser: NSObject, XMLParserDelegate {
         currentText = ""
         if (!attributeDict.values.isEmpty) {
             currenAttributes = attributeDict
+            currentReport["sifra"] = attributeDict["sifra"]
             currentReport["ge_sirina"] = attributeDict["ge_sirina"]
             currentReport["ge_dolzina"] = attributeDict["ge_dolzina"]
         }

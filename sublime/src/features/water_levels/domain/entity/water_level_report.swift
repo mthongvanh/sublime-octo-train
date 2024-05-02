@@ -12,11 +12,13 @@ struct WaterLevelReport: Codable {
     var waterbody: String
     var waterType: String
     var station: String
+    var stationCode: String
     var latitude: Double
     var longitude: Double
     var dateString: String
     var speed: Double
     var depth: Double
+    var temperature: Double
     var flow: String
 }
 

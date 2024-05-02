@@ -25,7 +25,10 @@
 		4CC5395F2BE0099000DBFD30 /* historical_data_point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5395E2BE0099000DBFD30 /* historical_data_point.swift */; };
 		4CC539612BE00AB000DBFD30 /* historical_data_point_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539602BE00AB000DBFD30 /* historical_data_point_model.swift */; };
 		4CC539632BE00C3800DBFD30 /* historical_data_point_mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539622BE00C3800DBFD30 /* historical_data_point_mapper.swift */; };
-		4CCA18F22BDA37B100A54A84 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CCA18F12BDA37B100A54A84 /* cleanboot_swift */; };
+		4CC539662BE0257400DBFD30 /* water_data_chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539652BE0257400DBFD30 /* water_data_chart.swift */; };
+		4CC539682BE0267900DBFD30 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CC539672BE0267900DBFD30 /* cleanboot_swift */; };
+		4CC5396A2BE0267E00DBFD30 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CC539692BE0267E00DBFD30 /* cleanboot_swift */; };
+		4CCA18F22BDA37B100A54A84 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CCA18F12BDA37B100A54A84 /* cleanboot_swift */; settings = {ATTRIBUTES = (Required, ); }; };
 		4CCA18F72BDAAA2500A54A84 /* sublime_annotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCA18F62BDAAA2500A54A84 /* sublime_annotation.swift */; };
 		4CCF69502BD5E3FF008A3987 /* sublimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF694F2BD5E3FF008A3987 /* sublimeTests.swift */; };
 		4CCF695A2BD5E3FF008A3987 /* sublimeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCF69592BD5E3FF008A3987 /* sublimeUITests.swift */; };
@@ -90,6 +93,7 @@
 		4CC5395E2BE0099000DBFD30 /* historical_data_point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point.swift; sourceTree = "<group>"; };
 		4CC539602BE00AB000DBFD30 /* historical_data_point_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point_model.swift; sourceTree = "<group>"; };
 		4CC539622BE00C3800DBFD30 /* historical_data_point_mapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point_mapper.swift; sourceTree = "<group>"; };
+		4CC539652BE0257400DBFD30 /* water_data_chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = water_data_chart.swift; sourceTree = "<group>"; };
 		4CCA18F62BDAAA2500A54A84 /* sublime_annotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sublime_annotation.swift; sourceTree = "<group>"; };
 		4CCF69352BD5E3FE008A3987 /* sublime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sublime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CCF694B2BD5E3FF008A3987 /* sublimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sublimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CC539682BE0267900DBFD30 /* cleanboot_swift in Frameworks */,
 				92704E53C606A0F4A2E1ED71 /* Pods_sublimeTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -148,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4CC5396A2BE0267E00DBFD30 /* cleanboot_swift in Frameworks */,
 				088C5593CD8DE82F0CF60310 /* Pods_sublime_sublimeUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,6 +195,7 @@
 				4CC539552BDEFE3F00DBFD30 /* station_detail */,
 				4CC539432BDEC86A00DBFD30 /* report_cell */,
 				4CC5393C2BDEC80400DBFD30 /* reports */,
+				4CC539642BE0255C00DBFD30 /* water_data_chart */,
 			);
 			path = presentation;
 			sourceTree = "<group>";
@@ -201,6 +208,14 @@
 				4CC5395A2BDEFF3300DBFD30 /* station_detail_view_model.swift */,
 			);
 			path = station_detail;
+			sourceTree = "<group>";
+		};
+		4CC539642BE0255C00DBFD30 /* water_data_chart */ = {
+			isa = PBXGroup;
+			children = (
+				4CC539652BE0257400DBFD30 /* water_data_chart.swift */,
+			);
+			path = water_data_chart;
 			sourceTree = "<group>";
 		};
 		4CCA18F32BDA859E00A54A84 /* views */ = {
@@ -606,6 +621,9 @@
 				4CCF694D2BD5E3FF008A3987 /* PBXTargetDependency */,
 			);
 			name = sublimeTests;
+			packageProductDependencies = (
+				4CC539672BE0267900DBFD30 /* cleanboot_swift */,
+			);
 			productName = cleanbootTests;
 			productReference = 4CCF694B2BD5E3FF008A3987 /* sublimeTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -626,6 +644,9 @@
 				4CCF69572BD5E3FF008A3987 /* PBXTargetDependency */,
 			);
 			name = sublimeUITests;
+			packageProductDependencies = (
+				4CC539692BE0267E00DBFD30 /* cleanboot_swift */,
+			);
 			productName = cleanbootUITests;
 			productReference = 4CCF69552BD5E3FF008A3987 /* sublimeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -836,6 +857,7 @@
 				4CF840FD2BD5E666001C2DD7 /* bootstrap_view_controller.swift in Sources */,
 				4CC539482BDECB6A00DBFD30 /* station_map_controller.swift in Sources */,
 				4CC539592BDEFF2400DBFD30 /* station_detail_view_controller.swift in Sources */,
+				4CC539662BE0257400DBFD30 /* water_data_chart.swift in Sources */,
 				4CF8410A2BD5E9CD001C2DD7 /* AppDelegate.swift in Sources */,
 				4CC5394C2BDECBFB00DBFD30 /* station_map_view_model.swift in Sources */,
 				4CC539422BDEC84000DBFD30 /* reports_view_model.swift in Sources */,
@@ -1084,10 +1106,11 @@
 			baseConfigurationReference = 388A3A09F26CF62AE6BDD941 /* Pods-sublimeTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				BUNDLE_LOADER = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V3FBF5C6J7;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				MARKETING_VERSION = 1.0;
@@ -1109,6 +1132,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V3FBF5C6J7;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				MARKETING_VERSION = 1.0;
@@ -1129,6 +1153,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V3FBF5C6J7;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thongvanh.michael.cleanbootUITests;
@@ -1148,6 +1173,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V3FBF5C6J7;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thongvanh.michael.cleanbootUITests;
@@ -1208,6 +1234,16 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4CC539672BE0267900DBFD30 /* cleanboot_swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAD4B622BDA308000C0066D /* XCLocalSwiftPackageReference "../cleanboot_swift" */;
+			productName = cleanboot_swift;
+		};
+		4CC539692BE0267E00DBFD30 /* cleanboot_swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAD4B622BDA308000C0066D /* XCLocalSwiftPackageReference "../cleanboot_swift" */;
+			productName = cleanboot_swift;
+		};
 		4CCA18F12BDA37B100A54A84 /* cleanboot_swift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4CAD4B622BDA308000C0066D /* XCLocalSwiftPackageReference "../cleanboot_swift" */;

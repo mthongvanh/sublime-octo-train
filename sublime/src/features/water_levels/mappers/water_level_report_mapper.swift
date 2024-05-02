@@ -19,11 +19,13 @@ private class WaterLevelReportMapper: Mapper {
             waterbody: entity.waterbody,
             waterType: entity.waterType,
             station: entity.station,
+            stationCode: entity.stationCode,
             latitude: entity.latitude,
             longitude: entity.longitude,
             dateString: entity.dateString,
             speed: entity.speed,
             depth: entity.depth,
+            temperature: entity.temperature,
             flow: entity.flow
         )
     }
@@ -33,11 +35,13 @@ private class WaterLevelReportMapper: Mapper {
             waterbody: model.waterbody,
             waterType: model.waterType,
             station: model.station,
+            stationCode: model.stationCode,
             latitude: model.latitude,
             longitude: model.longitude,
             dateString: model.dateString,
             speed: model.speed,
             depth: model.depth,
+            temperature: model.temperature,
             flow: model.flow
         )
     }
@@ -47,11 +51,13 @@ private class WaterLevelReportMapper: Mapper {
             waterbody: arso.river,
             waterType: arso.river.isEmpty ? "Other" : "River",
             station: arso.station, 
+            stationCode: arso.stationCode,
             latitude: arso.stationLatitude,
             longitude: arso.stationLongitude,
             dateString: arso.date,
             speed: arso.speed,
             depth: arso.depth,
+            temperature: arso.temperature,
             flow: arso.flow
         )
     }
@@ -87,11 +93,13 @@ extension WaterLevelReportARSO {
         let temperature = valueOrEmptyType(json: json, key: "temp_vode", type: Double.self)
         let depth = valueOrEmptyType(json: json, key: "vodostaj", type: Double.self)
         let speed = valueOrEmptyType(json: json, key: "pretok", type: Double.self)
+        let stationCode = valueOrEmptyType(json: json, key: "sifra", type: String.self)
         let latitude = valueOrEmptyType(json: json, key: "ge_sirina", type: Double.self)
         let longitude = valueOrEmptyType(json: json, key: "ge_dolzina", type: Double.self)
         
         return WaterLevelReportARSO(
             station: station,
+            stationCode: stationCode,
             stationShortName: stationShortName,
             stationLatitude: latitude,
             stationLongitude: longitude,

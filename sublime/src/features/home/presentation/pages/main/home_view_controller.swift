@@ -65,6 +65,7 @@ class HomeViewController: UIViewController, BaseViewController {
             if (report.station == self.stationMapViewController.controller.viewModel.lastSelectedLocation?.station) {
                 do {
                     let vm = StationDetailViewModel(
+                        stationReport: report,
                         historicalData: try AppServiceLocator.shared.get(
                             serviceType: GetHistoricalDataUseCase.self
                         )
