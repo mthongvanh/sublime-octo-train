@@ -11,6 +11,8 @@ struct WaterLevelReportARSO {
     // measuring station name
     var station: String //"merilno_mesto"
     
+    var stationCode: String //"6060"
+    
     // name composed of river name and station name
     var stationShortName: String //"ime_kratko"
     
@@ -49,6 +51,7 @@ struct WaterLevelReportARSO {
     
     init(
         station: String,
+        stationCode: String,
         stationShortName: String,
         stationLatitude: Double,
         stationLongitude: Double,
@@ -63,6 +66,7 @@ struct WaterLevelReportARSO {
         flow: String
     ) {
         self.station = station
+        self.stationCode = stationCode
         self.stationShortName = stationShortName
         self.stationLatitude = stationLatitude
         self.stationLongitude = stationLongitude

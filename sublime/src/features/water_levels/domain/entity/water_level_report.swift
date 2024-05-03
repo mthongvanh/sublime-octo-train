@@ -12,11 +12,13 @@ struct WaterLevelReport: Codable {
     var waterbody: String
     var waterType: String
     var station: String
+    var stationCode: String
     var latitude: Double
     var longitude: Double
     var dateString: String
     var speed: Double
     var depth: Double
+    var temperature: Double
     var flow: String
 }
 
@@ -43,6 +45,17 @@ extension WaterLevelReport {
             latitude: CLLocationDegrees(floatLiteral: latitude),
             longitude: CLLocationDegrees(floatLiteral: longitude)
         )
+    }
+    
+    public func valueForType(type: WaterLevelValueType) -> Double {
+        switch type {
+        case .depth:
+            return depth
+        case .speed:
+            return speed
+        case .temperature:
+            return temperature
+        }
     }
 }
 

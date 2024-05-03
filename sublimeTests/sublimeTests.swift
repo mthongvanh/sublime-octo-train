@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import cleanboot
+@testable import cleanboot_swift
 
 final class cleanbootTests: XCTestCase {
 

@@ -12,18 +12,38 @@ import cleanboot_swift
 class HomeViewController: UIViewController, BaseViewController {
     
     var viewModel: HomeViewModel
-    var tableView: UITableView?
-    var mapView: MKMapView?
+    
+    var reportsViewController: ReportsViewController
+    var filterViewController: ReportFilterViewController
+    var stationMapViewController: StationMapViewController
+    
+    var filterSearchBar = UISearchBar()
     
     init(viewModel: HomeViewModel) {
         // setup view model
         self.viewModel = viewModel
         
-        super.init(nibName: nil, bundle: nil)
+        let rvm = ReportsViewModel()
+        let rc = ReportsController(viewModel: rvm)
+        reportsViewController = ReportsViewController(
+            controller: rc,
+            style: .plain
+        )
+
+        let smvm = StationMapViewModel(onModelReady: nil, onModelUpdate: nil)
+        let smc = StationMapController(viewModel: smvm)
+        stationMapViewController = StationMapViewController(
+            controller: smc
+        )
         
-        // setup table view
-        self.tableView = UITableView()
-        self.mapView = MKMapView()
+        let filterVM = ReportsViewModel()
+        let filterController = ReportsController(viewModel: filterVM)
+        filterViewController = ReportFilterViewController(
+            controller: filterController,
+            style: .plain
+        )
+        
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -37,46 +57,73 @@ class HomeViewController: UIViewController, BaseViewController {
     
     // view setup
     func setupViews() {
-        // setup map view
-        mapView?.delegate = self;
-        mapView?.setRegion(
-            viewModel.initialRegion(),
-            animated: false
-        )
-        mapView?.register(
-            MKMarkerAnnotationView.self,
-            forAnnotationViewWithReuseIdentifier: "waterStationAnnoation"
-        )
         
-        // setup reports table view
-        tableView?.dataSource = self
-        tableView?.delegate = self
-        tableView?.register(
-            UITableViewCell.self,
-            forCellReuseIdentifier: "reportCell"
-        )
+        filterSearchBar.delegate = self
+        filterSearchBar.showsCancelButton = true
+        
+        reportsViewController.controller.onSelect = { (indexPath, report) in
+            if (report.station == self.stationMapViewController.controller.viewModel.lastSelectedLocation?.station) {
+                do {
+                    let vm = StationDetailViewModel(
+                        stationReport: report,
+                        historicalData: try AppServiceLocator.shared.get(
+                            serviceType: GetHistoricalDataUseCase.self
+                        )
+                    )
+                    let controller = StationDetailController(viewModel: vm)
+                    
+                    self.navigationController?.pushViewController(
+                        StationDetailViewController(
+                            controller: controller
+                        ),
+                        animated: true
+                    )
+                } catch {
+                    debugPrint(error)
+                }
+            } else {
+                self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
+            }
+        }
+        
+        filterViewController.tableView.isHidden = true
         
         // make sure to add subviews before setting up constraints
-        view.addSubview(mapView!)
-        view.addSubview(tableView!)
+        view.addSubview(stationMapViewController.mapView)
+        view.addSubview(reportsViewController.tableView)
+        view.addSubview(filterSearchBar)
+        view.addSubview(filterViewController.tableView)
         
         setupConstraints()
     }
     
     func setupConstraints() {
-        mapView?.snp.makeConstraints({ make in
+        stationMapViewController.mapView.snp.makeConstraints({ make in
             make.leading.top.trailing.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(
-                viewModel.mapHeightFactor
+                stationMapViewController.controller.viewModel.mapHeightFactor
             )
         })
         
-        tableView?.snp.makeConstraints({ make in
+        filterSearchBar.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(stationMapViewController.mapView.snp.bottom)
+        }
+        
+        reportsViewController.tableView.snp.makeConstraints({ make in
             make.leading.trailing.bottom.equalToSuperview()
         })
         
-        tableView?.snp.makeConstraints { make in
-            make.top.equalTo(mapView!.snp.bottom)
+        reportsViewController.tableView.snp.makeConstraints { make in
+            make.top.equalTo(filterSearchBar.snp.bottom)
+        }
+        
+        filterViewController.tableView.snp.makeConstraints({ make in
+            make.leading.trailing.bottom.equalToSuperview()
+        })
+        
+        filterViewController.tableView.snp.makeConstraints { make in
+            make.top.equalTo(filterSearchBar.snp.bottom)
         }
     }
     
@@ -84,108 +131,29 @@ class HomeViewController: UIViewController, BaseViewController {
     typealias T = HomeViewModel
     
     func onModelUpdate(viewModel: T) {
-        tableView?.reloadData()
+        reportsViewController.tableView.reloadData()
+        filterViewController.tableView.reloadData()
     }
     
     func onModelReady(viewModel: T) {
-        tableView?.reloadData()
-        let stations = viewModel.getStations()
-        do {
-            mapView?.addAnnotations(
-                try stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
-                return SublimeMapAnnotation(
-                    title: key.components(separatedBy: CharacterSet(["+"])).first!,
-                    coordinate: value.1,
-                    flowLevel: value.2
-                )
-            }))
-        } catch {
-            debugPrint(error)
-        }
+        reportsViewController.controller.setReports(viewModel.reports)
+        filterViewController.controller.viewModel.reportCollection = viewModel.reports
+        stationMapViewController.controller.updateStations(reports: viewModel.reports)
     }
-    
-    func zoom(report: WaterLevelReport) {
-        let coords = report.getLocationCoordinates()
-        setRegion(coords: coords)
-    }
-    
-    /// sets zoom region with visible distance spanning a default 20km
-    func setRegion(coords: CLLocationCoordinate2D, meters: Double = 10000) {
-        mapView?.setRegion(
-            MKCoordinateRegion(
-                center: coords,
-                latitudinalMeters: meters,
-                longitudinalMeters: meters
-            ),
-            animated: true
+}
+
+extension HomeViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterViewController.tableView.isHidden = (searchBar.text?.count ?? 0) < 3
+        filterViewController.controller.filter(text: searchText)
+        
+        stationMapViewController.controller.updateStations(
+            filterText: filterViewController.tableView.isHidden ? nil : searchText,
+            reports: viewModel.reports
         )
     }
-}
-
-extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.reports.count
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reportCell", for: indexPath)
-        
-        let model = viewModel.reports[indexPath.row]
-        var content = cell.defaultContentConfiguration()
-        content.text = "\(model.waterbody) @ \(model.station)"
-        content.secondaryText = "flow: \(model.speed) m^3/s, depth: \(model.depth) cm"
-        cell.contentConfiguration = content
-        let image = imageForFlow(flow: model.getFlow())
-        cell.accessoryView = image
-        return cell
-    }
-    
-    func imageForFlow(flow: WaterFlowLevel) -> UIImageView? {
-        var imageView: UIImageView?
-        switch flow {
-        case .high:
-            imageView = UIImageView(image: UIImage(systemName: "exclamationmark.triangle.fill"))
-            imageView?.tintColor = UIColor.red
-        case .low:
-            imageView = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
-            imageView?.tintColor = UIColor.green
-        default:
-            imageView = nil
-        }
-        return imageView
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        zoom(report: viewModel.reports[indexPath.row])
-    }
-}
-
-extension HomeViewController: MKMapViewDelegate {
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        
-        guard !annotation.isKind(of: MKUserLocation.self) else {
-            // Make a fast exit if the annotation is the `MKUserLocation`, as it's not an annotation view we wish to customize.
-            return nil
-        }
-        
-        var annotationView: MKAnnotationView?
-        if let sublime = annotation as? SublimeMapAnnotation {
-            let view = MKMarkerAnnotationView(
-                annotation: sublime,
-                reuseIdentifier: "waterStationAnnoation"
-            )
-            view.glyphText = sublime.title
-            annotationView = view
-            switch sublime.flowLevel {
-            case .low:
-                view.markerTintColor = UIColor.green
-            case .high:
-                view.markerTintColor = UIColor.red
-            default:
-                view.markerTintColor = UIColor.yellow
-            }
-        
-        }
-        return annotationView
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
 }

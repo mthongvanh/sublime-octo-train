@@ -15,8 +15,17 @@ class WaterLevelRepositoryImpl: WaterLevelRepository {
         self.remoteDataSource = remoteDataSource
     }
     
-    func getWaterLevels(span: ObservationSpan) async throws -> [WaterLevelReport] {
+    func getWaterLevels() async throws -> [WaterLevelReport] {
         return try await remoteDataSource.getWaterLevels().map<WaterLevelReport> { model in
+            model.toEntity()
+        }
+    }
+    
+    func getHistoricalData(stationCode: String, span: ObservationSpan) async throws -> [HistoricalDataPoint] {
+        return try await remoteDataSource.getHistoricalData(
+            stationCode: stationCode,
+            span: span
+        ).map<HistoricalDataPoint> { model in
             model.toEntity()
         }
     }
@@ -34,6 +43,9 @@ struct WaterLevelAPI {
     var environment: Environment
     var baseURL: String
     
+    private var stationCodeReplacementVariable = "$STATION_CODE"
+    private var spanReplacementVariable = "$SPAN_IN_DAYS"
+    
     init(environment: Environment, baseURL: String) {
         self.environment = environment
         self.baseURL = baseURL
@@ -48,8 +60,23 @@ struct WaterLevelAPI {
             return url
         }
     }
+    
+    func span(stationCode: String, days: Int = 1) -> URL {
+        let url = URL(
+            string: WaterLevelEndpoints.span.rawValue.replacingOccurrences(
+                of: stationCodeReplacementVariable,
+                with: stationCode
+            ).replacingOccurrences(
+                of: spanReplacementVariable,
+                with: "\(days)"
+            ),
+            relativeTo: URL(string: baseURL)
+        )!
+        return url
+    }
 }
 
 enum WaterLevelEndpoints: String {
     case latest = "/xml/vode/hidro_podatki_zadnji.xml"
+    case span = "/vode/podatki/amp/H$STATION_CODE_t_$SPAN_IN_DAYS.html"
 }

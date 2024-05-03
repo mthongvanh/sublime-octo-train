@@ -14,36 +14,7 @@ class HomeViewModel: ViewModel<HomeViewModel> {
     var getWaterLevels: GetWaterLevelsUseCase
     
     var reports = [WaterLevelReport]()
-    
-    var ljubljana = CLLocationCoordinate2D(
-        latitude: CLLocationDegrees(
-            floatLiteral: 46.05108000
-        ),
-        longitude: CLLocationDegrees(
-            floatLiteral: 14.50513000
-        )
-    )
-    
-    var mapHeightFactor = 0.35
-    var mapZoomLevel = 0.5
-    
-    func initialLocation() -> CLLocationCoordinate2D {
-        ljubljana
-    }
-    
-    func initialRegion() -> MKCoordinateRegion {
-        MKCoordinateRegion(
-            center: initialLocation(),
-            span: MKCoordinateSpan(
-                latitudeDelta: CLLocationDegrees(
-                    mapZoomLevel
-                ),
-                longitudeDelta: CLLocationDegrees(
-                    mapZoomLevel
-                )
-            )
-        )
-    }
+    var filtered = [WaterLevelReport]()
     
     init(
         getWaterLevels: GetWaterLevelsUseCase,
@@ -69,6 +40,8 @@ class HomeViewModel: ViewModel<HomeViewModel> {
             reports = try await water.getWaterLevels().map<WaterLevelReport>({ model in
                 model.toEntity()
             })
+            reports.sort { $0.waterbody < $1.waterbody }
+            
             DispatchQueue.main.async {
                 guard let modelReady = self.onModelReady else {
                     self.updateLoadState(loadState: .error)
@@ -81,28 +54,5 @@ class HomeViewModel: ViewModel<HomeViewModel> {
         } catch {
             updateLoadState(loadState: .error)
         }
-    }
-    
-    func getStations() -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
-        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
-        for report in reports {
-            let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
-            if (!stations.keys.contains(key)) {
-                let location = CLLocationCoordinate2D(
-                    latitude: CLLocationDegrees(
-                        floatLiteral: report.latitude
-                    ),
-                    longitude: CLLocationDegrees(
-                        floatLiteral: report.longitude
-                    )
-                )
-                
-                stations.updateValue(
-                    (report.station, location, report.getFlow()),
-                    forKey: key
-                )
-            }
-        }
-        return stations
     }
 }

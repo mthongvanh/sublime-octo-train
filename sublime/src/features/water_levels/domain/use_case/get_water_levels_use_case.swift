@@ -16,7 +16,7 @@ struct GetWaterLevelsUseCase: UseCase {
     
     func execute(params: Void) async throws -> cleanboot_swift.UseCaseResult<[WaterLevelReport]> {
         do {
-            let reports = try await repo.getWaterLevels(span: .latest)
+            let reports = try await repo.getWaterLevels()
             return .success(reports)
         } catch {
             return .failure(error)
