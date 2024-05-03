@@ -68,7 +68,11 @@ class StationDetailViewController: UIViewController, BaseViewController {
             /// setup chart container
             chartContainer.isSkeletonable = true
             chartContainer.skeletonCornerRadius = 10
-            chartContainer.showAnimatedGradientSkeleton(animation: SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .topLeftBottomRight))
+            chartContainer.showAnimatedGradientSkeleton(
+                animation: SkeletonAnimationBuilder().makeSlidingAnimation(
+                    withDirection: .topLeftBottomRight
+                )
+            )
             
             view.addSubview(chartContainer)
             chartContainer.snp.makeConstraints { make in
@@ -82,11 +86,27 @@ class StationDetailViewController: UIViewController, BaseViewController {
                 make.height.equalTo(view.snp.height).multipliedBy(0.33)
             }
             
+            let spanLabel = UILabel()
+            spanLabel.text = "Viewing data for the following period:"
+            spanLabel.font = .preferredFont(forTextStyle: .headline)
+
+
+            view.addSubview(spanLabel)
+            spanLabel.snp.makeConstraints { make in
+                make.top.equalTo(chartContainer.snp.bottom).offset(20)
+                make.leading.equalToSuperview { superView in
+                    superView.snp.leadingMargin
+                }
+                make.trailing.equalToSuperview { superView in
+                    superView.snp.trailingMargin
+                }
+            }
+            
             /// setup data type picker
             observationSpanControl = try buildObservationSpanPicker()
             view.addSubview(observationSpanControl!)
             observationSpanControl!.snp.makeConstraints { make in
-                make.top.equalTo(chartContainer.snp.bottom).offset(20)
+                make.top.equalTo(spanLabel.snp.bottom).offset(10)
                 make.leading.equalToSuperview { superView in
                     superView.snp.leadingMargin
                 }
