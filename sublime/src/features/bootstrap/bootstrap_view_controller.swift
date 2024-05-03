@@ -49,8 +49,10 @@ class BootstrapViewController: UIViewController {
             let serviceLocator = AppServiceLocator.shared
             await DependencyInjector().bootstrap(
                 serviceLocator: serviceLocator
-            )
-            continueToApp(serviceLocator)
+            )            
+            DispatchQueue.main.async {
+                self.continueToApp(serviceLocator)
+            }
         })
     }
     
@@ -74,7 +76,7 @@ class BootstrapViewController: UIViewController {
     private func continueToApp(_ serviceLocator: AppServiceLocator) {
         do {
             guard let keyWindow = UIApplication.shared.firstKeyWindow else {
-                return
+                throw URLError(.badServerResponse, userInfo: ["bad": "keyWindow was nil"])
             }
             
             keyWindow.rootViewController = UINavigationController(

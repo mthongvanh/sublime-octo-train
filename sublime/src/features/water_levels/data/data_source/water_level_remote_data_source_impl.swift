@@ -155,34 +155,43 @@ class ARSOWaterLevelParser {
     
     //Parse CSS selector
     func parse(html: String) throws -> [Item] {
-        do {
-            // parse it into a Document
-            document = try SwiftSoup.parse(html)
-            // parse css query
-            let css = "tr"
+            var unformattedRows = [Item]()
             
-            //empty old items
-            var items = [Item]()
-            // firn css selector
-            let elements: Elements = try document.select(css)
-            
-            let date = Calendar.current.dateComponents([.year], from: Date.now)
-            
-            for element in elements {
-                let text = try element.text()
-                let matchString = ".\(date.year ?? 1999) "
-                let match = text.range(of: matchString)
-                if (match != nil) {
-                    let html = try element.outerHtml()
-                    items.append(Item(text: text, html: html))
-                } else {
-                    debugPrint("not found \(text)")
+            // extract everything beetween the <tbody> and </tbody> tags
+            if let range = html.range(of: "<tbody>")?.upperBound {
+                let substring = html[range..<html.endIndex]
+                if let closingBodyTagRange = substring.range(of: "</tbody>")?.lowerBound {
+                    let tableRows = substring[substring.startIndex..<closingBodyTagRange]
+                    
+                    // extract text between the <tr> and </tr> tags
+                    var closingRowRanges = tableRows.ranges(of: "</tr>")
+                    if !closingRowRanges.isEmpty {
+                        closingRowRanges.sort { a, b in
+                            a.upperBound < b.upperBound
+                        }
+                        
+                        // remove new lines and trim table row data, then split the string
+                        // using the closing and start table data tags </td><td>
+                        var separatorSet = CharacterSet()
+                        separatorSet.insert(charactersIn: "</td><td>")
+                        
+                        var previousUpperBound = tableRows.startIndex
+                        for closingTRRange in closingRowRanges {
+                            let rowSubstring = tableRows[previousUpperBound..<closingTRRange.upperBound]
+                            var row = rowSubstring.lowercased()
+                            row = row.replacingOccurrences(of: "\n", with: "")
+                            row = row.replacingOccurrences(of: "<tr><td>", with: "")
+                            row = row.replacingOccurrences(of: "</td></tr>", with: "")
+                            unformattedRows.append(
+                                Item(row.split(
+                                    separator: try Regex("</td><td>")
+                                ).joined(separator: " "), "")
+                            )
+                            previousUpperBound = closingTRRange.upperBound
+                        }
+                    }
                 }
             }
-
-            return items
-        } catch let error {
-            throw error
-        }
+            return unformattedRows
     }
 }
