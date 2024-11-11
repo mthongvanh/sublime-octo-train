@@ -14,10 +14,17 @@ class ReportsController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     var viewModel: ReportsViewModel
     var onSelect: OnSelect?
+    var toggleFavorite: ToggleFavoriteStationUseCase?
+    var getFavoriteStatus: GetFavoriteStatusUseCase?
     
-    init(viewModel: ReportsViewModel, onSelect: OnSelect? = nil) {
+    init(
+        viewModel: ReportsViewModel,
+        onSelect: OnSelect? = nil,
+        toggleFavorite: ToggleFavoriteStationUseCase
+    ) {
         self.viewModel = viewModel
         self.onSelect = onSelect
+        self.toggleFavorite = toggleFavorite
     }
     
     func setReports(_ reports: [WaterLevelReport]) {
@@ -38,6 +45,18 @@ class ReportsController: NSObject, UITableViewDelegate, UITableViewDataSource {
         var content = cell.defaultContentConfiguration()
         content.text = viewModel.text()
         content.secondaryText = viewModel.secondaryText()
+        cell.accessoryView?.removeFromSuperview()
+        let button = buildFavoriteButton(viewModel: viewModel)
+        button.addAction(UIAction(
+            handler: { action in
+                Task.init {
+                    await self.updateFavorite(
+                        tableView: tableView,
+                        indexPath: indexPath
+                    )
+                }
+            }), for: .touchUpInside)
+        cell.accessoryView = button
         cell.contentConfiguration = content
         
         return cell
@@ -49,11 +68,40 @@ class ReportsController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    @objc
+    func updateFavorite(tableView: UITableView, indexPath: IndexPath) async {
+        do {
+            let vm = viewModel.reportCellViewModels[indexPath.row]
+            let code = vm.report.stationCode
+            let response = try await toggleFavorite?.execute(params: code)
+            switch response {
+            case .success(let favorited):
+                vm.favorite = favorited
+            default:
+                debugPrint("not favorited")
+            }
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        } catch {
+            debugPrint(error)
+        }
+    }
+    
     @objc func beginRefresh() async {
         await viewModel.prepareData()
     }
     
     func filter(text: String) {
         viewModel.filter(text: text)
+    }
+}
+
+extension ReportsController {
+    func buildFavoriteButton(viewModel: ReportCellViewModel) -> UIButton {
+        let button = UIButton()
+        button.sizeToFit()
+        button.setImage(viewModel.favoriteImage(), for: .normal)
+        button.tintColor = viewModel.favorite ? .systemYellow : .systemGray
+        button.isSelected = viewModel.favorite
+        return button
     }
 }

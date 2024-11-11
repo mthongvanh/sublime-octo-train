@@ -10,9 +10,14 @@ import Foundation
 class WaterLevelRepositoryImpl: WaterLevelRepository {
     
     private var remoteDataSource: WaterLevelRemoteDataSource
+    private var localDataSource: WaterLevelLocalDataSource
     
-    init(remoteDataSource: WaterLevelRemoteDataSource) {
+    init(
+        remoteDataSource: WaterLevelRemoteDataSource,
+        localDataSource: WaterLevelLocalDataSource
+    ) {
         self.remoteDataSource = remoteDataSource
+        self.localDataSource = localDataSource
     }
     
     func getWaterLevels() async throws -> [WaterLevelReport] {
@@ -28,6 +33,19 @@ class WaterLevelRepositoryImpl: WaterLevelRepository {
         ).map<HistoricalDataPoint> { model in
             model.toEntity()
         }
+    }
+    
+    func toggleStationFavorite(stationCode: String) async throws -> Bool {
+        return try await localDataSource.toggleStationFavorite(stationCode: stationCode)
+    }
+    
+    
+    func getFavoriteStatus(stationCode: String) throws -> Bool {
+        return localDataSource.getFavoriteStatus(stationCode: stationCode)
+    }
+    
+    func getFavorites() throws -> [String] {
+        return localDataSource.getFavorites()
     }
 }
 

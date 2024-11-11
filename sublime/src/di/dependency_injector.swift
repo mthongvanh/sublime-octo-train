@@ -20,8 +20,11 @@ class DependencyInjector {
                 baseURL: "https://www.arso.gov.si")
         )
         
+        let localDataSource = WaterLevelLocalDataSourceImpl()
+        
         let repo = WaterLevelRepositoryImpl(
-            remoteDataSource: remoteDataSource
+            remoteDataSource: remoteDataSource,
+            localDataSource: localDataSource
         )
         
         try serviceLocator.registerSingleton(
@@ -55,6 +58,31 @@ class DependencyInjector {
             identifier: nil
         )
         
+        try serviceLocator.registerFactory(
+            instantiator: { parameters in
+                ToggleFavoriteStationUseCase(
+                    repo: try serviceLocator.get(
+                        serviceType: WaterLevelRepository.self,
+                    identifier: nil,
+                    parameters: nil
+                )
+            )},
+            type: ToggleFavoriteStationUseCase.self,
+            identifier: nil
+        )
+        
+        try serviceLocator.registerFactory(
+            instantiator: { parameters in
+                GetFavoriteStatusUseCase(
+                    repo: try serviceLocator.get(
+                        serviceType: WaterLevelRepository.self,
+                    identifier: nil,
+                    parameters: nil
+                )
+            )},
+            type: GetFavoriteStatusUseCase.self,
+            identifier: nil
+        )
     }
     
     func registerPages(_ serviceLocator: ServiceLocator) throws {
