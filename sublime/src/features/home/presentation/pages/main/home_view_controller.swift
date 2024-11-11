@@ -8,14 +8,21 @@
 import UIKit
 import MapKit
 import cleanboot_swift
+import SwiftUI
 
 class HomeViewController: UIViewController, BaseViewController {
     
     var viewModel: HomeViewModel
     
-    var reportsViewController: ReportsViewController
     var filterViewController: ReportFilterViewController
     var stationMapViewController: StationMapViewController
+    
+    var reportsData: ReportsData
+    
+    var reportsHost: UIHostingController<reports_view>?
+    var reportsContainer: UIView = UIView()
+    var reportsView: reports_view
+    
     
     var filterSearchBar = UISearchBar()
     
@@ -23,27 +30,37 @@ class HomeViewController: UIViewController, BaseViewController {
         // setup view model
         self.viewModel = viewModel
         
-        let rvm = ReportsViewModel()
-        let rc = ReportsController(viewModel: rvm)
-        reportsViewController = ReportsViewController(
-            controller: rc,
-            style: .plain
-        )
+        do {
+            let toggleFavorite = try AppServiceLocator.shared.get(
+                serviceType: ToggleFavoriteStationUseCase.self
+            )
+            
+            let smvm = StationMapViewModel(onModelReady: nil, onModelUpdate: nil)
+            let smc = StationMapController(viewModel: smvm)
+            stationMapViewController = StationMapViewController(
+                controller: smc
+            )
+            
+            let filterVM = ReportsViewModel(
+                getFavoriteStatus: try AppServiceLocator.shared.get(
+                    serviceType: GetFavoriteStatusUseCase.self
+                ))
+            let filterController = ReportsController(viewModel: filterVM, toggleFavorite: toggleFavorite)
+            filterViewController = ReportFilterViewController(
+                controller: filterController,
+                style: .plain
+            )
 
-        let smvm = StationMapViewModel(onModelReady: nil, onModelUpdate: nil)
-        let smc = StationMapController(viewModel: smvm)
-        stationMapViewController = StationMapViewController(
-            controller: smc
-        )
-        
-        let filterVM = ReportsViewModel()
-        let filterController = ReportsController(viewModel: filterVM)
-        filterViewController = ReportFilterViewController(
-            controller: filterController,
-            style: .plain
-        )
-        
-        super.init(nibName: nil, bundle: nil)
+            reportsData = ReportsData(waterLevelRepo: try AppServiceLocator.shared.get(
+                serviceType: WaterLevelRepository.self
+            ))
+            
+            reportsView = reports_view(reportsViewModel: nil, reportsData: reportsData)
+            
+            super.init(nibName: nil, bundle: nil)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -61,36 +78,39 @@ class HomeViewController: UIViewController, BaseViewController {
         filterSearchBar.delegate = self
         filterSearchBar.showsCancelButton = true
         
-        reportsViewController.controller.onSelect = { (indexPath, report) in
-            if (report.station == self.stationMapViewController.controller.viewModel.lastSelectedLocation?.station) {
-                do {
-                    let vm = StationDetailViewModel(
-                        stationReport: report,
-                        historicalData: try AppServiceLocator.shared.get(
-                            serviceType: GetHistoricalDataUseCase.self
-                        )
-                    )
-                    let controller = StationDetailController(viewModel: vm)
-                    
-                    self.navigationController?.pushViewController(
-                        StationDetailViewController(
-                            controller: controller
-                        ),
-                        animated: true
-                    )
-                } catch {
-                    debugPrint(error)
-                }
-            } else {
-                self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
-            }
-        }
+        // remove this after implementing with swiftui version of reports list
+//        reportsViewController.controller?.onSelect = { (indexPath, report) in
+//            if (report.station == self.stationMapViewController.controller.viewModel.lastSelectedLocation?.station) {
+//                do {
+//                    let vm = StationDetailViewModel(
+//                        stationReport: report,
+//                        historicalData: try AppServiceLocator.shared.get(
+//                            serviceType: GetHistoricalDataUseCase.self
+//                        )
+//                    )
+//                    let controller = StationDetailController(viewModel: vm)
+//                    
+//                    self.navigationController?.pushViewController(
+//                        StationDetailViewController(
+//                            controller: controller
+//                        ),
+//                        animated: true
+//                    )
+//                } catch {
+//                    debugPrint(error)
+//                }
+//            } else {
+//                self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
+//            }
+//        }
         
         filterViewController.tableView.isHidden = true
         
+        reportsHost = setupReports()
+        
         // make sure to add subviews before setting up constraints
         view.addSubview(stationMapViewController.mapView)
-        view.addSubview(reportsViewController.tableView)
+        view.addSubview(reportsContainer)
         view.addSubview(filterSearchBar)
         view.addSubview(filterViewController.tableView)
         
@@ -110,11 +130,11 @@ class HomeViewController: UIViewController, BaseViewController {
             make.top.equalTo(stationMapViewController.mapView.snp.bottom)
         }
         
-        reportsViewController.tableView.snp.makeConstraints({ make in
+        reportsContainer.snp.makeConstraints({ make in
             make.leading.trailing.bottom.equalToSuperview()
         })
         
-        reportsViewController.tableView.snp.makeConstraints { make in
+        reportsContainer.snp.makeConstraints { make in
             make.top.equalTo(filterSearchBar.snp.bottom)
         }
         
@@ -127,17 +147,38 @@ class HomeViewController: UIViewController, BaseViewController {
         }
     }
     
+    func setupReports() -> UIHostingController<reports_view> {
+        /// cleanup old hosting controller and chart
+        if (reportsHost != nil) {
+            reportsHost?.removeFromParent()
+            reportsHost?.view.removeFromSuperview()
+            reportsHost = nil
+        }
+        
+        let host = UIHostingController(
+            rootView: reportsView
+        )
+        host.sizingOptions = .intrinsicContentSize
+        host.view.translatesAutoresizingMaskIntoConstraints = false
+        self.addChild(host)
+        
+        reportsContainer.addSubview(host.view)
+        host.view.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        host.didMove(toParent: self)
+        return host
+    }
+    
     // base view controller conformance
     typealias T = HomeViewModel
     
     func onModelUpdate(viewModel: T) {
-        reportsViewController.tableView.reloadData()
         filterViewController.tableView.reloadData()
     }
     
     func onModelReady(viewModel: T) {
-        reportsViewController.controller.setReports(viewModel.reports)
-        filterViewController.controller.viewModel.reportCollection = viewModel.reports
+        filterViewController.controller?.viewModel.reportCollection = viewModel.reports
         stationMapViewController.controller.updateStations(reports: viewModel.reports)
     }
 }
@@ -145,7 +186,7 @@ class HomeViewController: UIViewController, BaseViewController {
 extension HomeViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filterViewController.tableView.isHidden = (searchBar.text?.count ?? 0) < 3
-        filterViewController.controller.filter(text: searchText)
+        filterViewController.controller?.filter(text: searchText)
         
         stationMapViewController.controller.updateStations(
             filterText: filterViewController.tableView.isHidden ? nil : searchText,
