@@ -9,7 +9,7 @@ import UIKit
 import cleanboot_swift
 
 class ReportsViewController: UITableViewController, BaseViewController {
-    var controller: ReportsController
+    var controller: ReportsController?
     
     init(
         controller: ReportsController,
@@ -21,9 +21,23 @@ class ReportsViewController: UITableViewController, BaseViewController {
     }
     
     required init?(coder: NSCoder) {
-        self.controller = ReportsController(viewModel: ReportsViewModel())
-        super.init(coder: coder)
-        sharedInit(self.controller)
+        do {
+            super.init(coder: coder)
+            let controller = ReportsController(
+                viewModel: ReportsViewModel(
+                    getFavoriteStatus: try AppServiceLocator.shared.get(
+                        serviceType: GetFavoriteStatusUseCase.self
+                    )
+                ),
+                toggleFavorite: try AppServiceLocator.shared.get(
+                    serviceType: ToggleFavoriteStationUseCase.self
+                )
+            )
+            self.controller = controller
+            sharedInit(self.controller!)
+        } catch {
+            debugPrint(error)
+        }
     }
     
     func sharedInit(_ controller: ReportsController) {
@@ -50,7 +64,7 @@ class ReportsViewController: UITableViewController, BaseViewController {
     
     @objc func beginRefresh() {
         Task.init {
-            await controller.beginRefresh()
+            await controller?.beginRefresh()
         }
     }
     

@@ -7,20 +7,26 @@
 
 import Foundation
 import cleanboot_swift
+import SwiftUI
 
-class ReportsViewModel: ViewModel<ReportsViewModel> {
+@Observable class ReportsViewModel: ViewModel<ReportsViewModel> {
     
     var reportCollection = [WaterLevelReport]()
     private var _displayedReports = [WaterLevelReport]()
+    private var _favoriteReports = [WaterLevelReport]()
     
     var reportCellViewModels = [ReportCellViewModel]()
     
+    var getFavoriteStatus: GetFavoriteStatusUseCase?
+    
     init(
         reports: [WaterLevelReport] = [WaterLevelReport](),
-        reportCellViewModels: [ReportCellViewModel] = [ReportCellViewModel]()
+        reportCellViewModels: [ReportCellViewModel] = [ReportCellViewModel](),
+        getFavoriteStatus: GetFavoriteStatusUseCase
     ) {
         self.reportCollection = reports
         self.reportCellViewModels = reportCellViewModels
+        self.getFavoriteStatus = getFavoriteStatus
         
         super.init(onModelReady: nil, onModelUpdate: nil)
     }
@@ -40,10 +46,35 @@ class ReportsViewModel: ViewModel<ReportsViewModel> {
         }
     }
     
+    var bindableReports: Binding<[WaterLevelReport]> {
+        get {
+            Binding<[WaterLevelReport]>(
+                get: {
+                    self._displayedReports
+                },
+                set: { reports in
+                    for report in self.reportCollection {
+                        if let index = self.reportCollection.firstIndex(where: { $0.id == report.id }) {
+                            self.reportCollection[index] = report
+                        }
+                    }
+                }
+            )
+        }
+    }
+    
     func updateCellViewModels(_ reports: [WaterLevelReport]) {
         do {
             self.reportCellViewModels = try reports.map<ReportCellViewModel>({ report in
-                ReportCellViewModel(report: report)
+                let vm = ReportCellViewModel(report: report)
+                let result = try getFavoriteStatus?.execute(params: report.stationCode)
+                switch result {
+                case .success(let favorite):
+                    vm.favorite = favorite
+                default:
+                    vm.favorite = false
+                }
+                return vm
             })
         } catch {
             debugPrint(error)

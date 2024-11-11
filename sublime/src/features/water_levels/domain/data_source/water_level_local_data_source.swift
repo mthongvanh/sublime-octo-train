@@ -6,3 +6,16 @@
 //
 
 import Foundation
+
+protocol WaterLevelLocalDataSource {
+    mutating func toggleStationFavorite(
+        stationCode: String
+    ) async throws -> Bool
+    
+    func getFavoriteStatus(stationCode: String) -> Bool
+    
+    /// Collection of favorite water bodies
+    ///
+    /// Returns a list of water station codes
+    func getFavorites() -> [String]
+}

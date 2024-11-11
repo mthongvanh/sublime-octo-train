@@ -10,6 +10,8 @@ import cleanboot_swift
 
 class ReportCellViewModel: ViewModel<ReportCellViewModel> {
     var report: WaterLevelReport
+    var favorite = false
+    
     init(
         report: WaterLevelReport,
         onReady: OnModelReady<ReportCellViewModel>? = nil,
@@ -40,5 +42,9 @@ class ReportCellViewModel: ViewModel<ReportCellViewModel> {
             imageView = nil
         }
         return imageView
+    }
+    
+    func favoriteImage() -> UIImage? {
+        return UIImage(systemName: favorite ? "star.fill" : "star")
     }
 }

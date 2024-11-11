@@ -14,6 +14,21 @@ protocol WaterLevelRepository {
         stationCode: String,
         span: ObservationSpan
     ) async throws -> [HistoricalDataPoint]
+    
+    /// adds or removes a station to/from the favorite station collection
+    ///
+    /// return whether the station is a favorite or not
+    func toggleStationFavorite(stationCode: String) async throws -> Bool
+    
+    /// Gets whether a station is a favorite or not
+    ///
+    /// return whether the station is a favorite or not
+    func getFavoriteStatus(stationCode: String) throws -> Bool
+    
+    /// Gets a list of currently favorited water bodies
+    ///
+    /// return a collection of favorited water report station codes
+    func getFavorites() throws -> [String]
 }
 
 /// #ObservationSpan
