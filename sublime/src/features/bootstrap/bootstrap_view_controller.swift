@@ -45,7 +45,7 @@ class BootstrapViewController: UIViewController {
     }
     
     func bootstrap() {
-        Task(operation: {
+        Task.init {
             let serviceLocator = AppServiceLocator.shared
             await DependencyInjector().bootstrap(
                 serviceLocator: serviceLocator
@@ -53,7 +53,7 @@ class BootstrapViewController: UIViewController {
             DispatchQueue.main.async {
                 self.continueToApp(serviceLocator)
             }
-        })
+        }
     }
     
     //View Model management
