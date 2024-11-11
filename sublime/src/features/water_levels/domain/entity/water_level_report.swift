@@ -8,7 +8,13 @@
 import Foundation
 import MapKit
 
-struct WaterLevelReport: Codable {
+struct WaterLevelReport: Codable, Identifiable {
+    var id: String {
+        get {
+            "\(stationCode)\(latitude)\(longitude)\(dateString)"
+        }
+    }
+    
     var waterbody: String
     var waterType: String
     var station: String
