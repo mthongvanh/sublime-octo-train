@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 protocol WaterLevelRepository {
     func getWaterLevels() async throws -> [WaterLevelReport]
@@ -28,7 +29,7 @@ protocol WaterLevelRepository {
     /// Gets a list of currently favorited water bodies
     ///
     /// return a collection of favorited water report station codes
-    func getFavorites() throws -> [String]
+    func getFavorites() throws -> Binding<[String]>
 }
 
 /// #ObservationSpan

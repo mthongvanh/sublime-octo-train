@@ -18,40 +18,48 @@ struct reports_view: View {
     }
     
     var body: some View {
-        VStack {
-            List {
-                ForEach(reportsData.displayedData) { section in
-                    Section(header: Text(section.title)) {
-                        ForEach(section.data) { report in
-                            HStack(content: {
-                                VStack(alignment: .leading, content: {
-                                    Text(
-                                        "\(report.waterbody) @ \(report.station)")
-                                    HStack(content: {
-                                        Text("flow: \(report.speed) m^3/s, depth: \(report.depth) cm").font(.subheadline)
+        switch reportsData.dataState {
+        case .initialized:
+            ProgressView().task {
+                await reportsData.reloadData()
+            }
+        case .loading:
+            ProgressView()
+        case .loaded:
+            VStack {
+                List {
+                    ForEach(reportsData.displayedData) { section in
+                        Section(header: Text(section.title)) {
+                            ForEach(section.data) { report in
+                                HStack(content: {
+                                    VStack(alignment: .leading, content: {
+                                        Text(
+                                            "\(report.waterbody) @ \(report.station)")
+                                        HStack(content: {
+                                            Text("flow: \(report.speed) m^3/s, depth: \(report.depth) cm").font(.subheadline)
+                                        })
+                                    })
+                                    Spacer()
+                                    Button(action: {
+                                        Task {
+                                            await reportsData.didToggleFavorite(stationCode:report.stationCode)
+                                        }
+                                    }, label: {
+                                        let favorite = reportsData.isFavorite(stationCode: report.stationCode)
+                                        Image(
+                                            systemName: favorite
+                                            ? "star.fill"
+                                            : "star"
+                                        ).tint(favorite ? Color.yellow : Color.gray)
                                     })
                                 })
-                                Spacer()
-                                Button(action: {
-                                    Task {
-                                        await reportsData.didToggleFavorite(stationCode:report.stationCode)
-                                    }
-                                }, label: {
-                                    let favorite = reportsData.isFavorite(stationCode: report.stationCode)
-                                    Image(
-                                        systemName: favorite
-                                        ? "star.fill"
-                                        : "star"
-                                    ).tint(favorite ? Color.yellow : Color.gray)
-                                })
-                            })
+                            }
                         }
                     }
                 }
             }
-        }
-        .task {
-            await reportsData.loadData()
+        case .error:
+            Text("Encountered an error while loading the data")
         }
     }
 }
