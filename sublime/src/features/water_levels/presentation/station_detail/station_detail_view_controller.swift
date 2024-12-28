@@ -14,9 +14,9 @@ class StationDetailViewController: UIViewController, BaseViewController {
     
     var controller: StationDetailController
     
-    var chart: water_data_chart?
+    var chart: WaterDataChart?
     var chartContainer: UIView = UIView()
-    var chartHost: UIHostingController<water_data_chart>?
+    var chartHost: UIHostingController<WaterDataChart>?
     
     var dataTypeControl: UISegmentedControl?
     var observationSpanControl: UISegmentedControl?
@@ -128,7 +128,7 @@ class StationDetailViewController: UIViewController, BaseViewController {
         }
         
         /// setup new chart instance with hosting controller
-        chart = water_data_chart(
+        chart = WaterDataChart(
             dataPoints: WaterChartData(
                 data: controller.viewModel.chartItems,
                 lastReport: controller.viewModel.stationReport,

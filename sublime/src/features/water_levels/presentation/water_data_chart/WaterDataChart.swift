@@ -32,13 +32,12 @@ class WaterChartData: ObservableObject {
     }
 }
 
-struct water_data_chart: View {
+struct WaterDataChart: View {
     
     @ObservedObject var dataPoints: WaterChartData
     
     init(dataPoints: WaterChartData) {
         self.dataPoints = dataPoints
-        print(dataPoints.dataType)
     }
     
     var body: some View {
@@ -97,7 +96,7 @@ struct water_data_chart: View {
 }
 
 #Preview {
-    water_data_chart(dataPoints: WaterChartData(data: [
+    WaterDataChart(dataPoints: WaterChartData(data: [
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 1 * (60 * 60 * 30), since: Date.now), yAxisValue: 1.0, yAxisMax: 0.1),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 2 * (60 * 60 * 30), since: Date.now), yAxisValue: 2.0, yAxisMax: 5.0),
         ChartItemModel(xAxisIdentifier: Date.init(timeInterval: 3 * (60 * 60 * 30), since: Date.now), yAxisValue: 3.0, yAxisMax: 5.0),

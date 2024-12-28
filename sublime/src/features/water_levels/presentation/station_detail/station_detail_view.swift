@@ -41,19 +41,18 @@ struct StationDetail: View {
                 .padding(.bottom, 16)
                 .onChange(of: dataSpan) {
                     Task {
-                        print(dataSpan)
                         await updateChartData(period: dataSpan, dataType: dataType)
                     }
                 }
                 
                 /// water data chart
-                water_data_chart(
+                WaterDataChart(
                     dataPoints: WaterChartData(
                         data: chartItems,
                         lastReport: viewModel.stationReport,
                         dataType: dataType
                     )
-                )
+                ).frame(height: 300)
                 
                 // create a picker with a title above it
                 VStack() {
@@ -75,6 +74,7 @@ struct StationDetail: View {
                             }
                         }
                 }.padding(.top)
+                Spacer()
             }
             .padding(.horizontal, 16)
             .onAppear() {
