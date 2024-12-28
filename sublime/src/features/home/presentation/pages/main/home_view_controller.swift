@@ -29,10 +29,6 @@ class HomeViewController: UIViewController, BaseViewController {
         self.viewModel = viewModel
         
         do {
-            let toggleFavorite = try AppServiceLocator.shared.get(
-                serviceType: ToggleFavoriteStationUseCase.self
-            )
-            
             let smvm = StationMapViewModel(onModelReady: nil, onModelUpdate: nil)
             let smc = StationMapController(viewModel: smvm)
             stationMapViewController = StationMapViewController(

@@ -29,7 +29,7 @@
 		4CC5395F2BE0099000DBFD30 /* historical_data_point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5395E2BE0099000DBFD30 /* historical_data_point.swift */; };
 		4CC539612BE00AB000DBFD30 /* historical_data_point_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539602BE00AB000DBFD30 /* historical_data_point_model.swift */; };
 		4CC539632BE00C3800DBFD30 /* historical_data_point_mapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539622BE00C3800DBFD30 /* historical_data_point_mapper.swift */; };
-		4CC539662BE0257400DBFD30 /* water_data_chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539652BE0257400DBFD30 /* water_data_chart.swift */; };
+		4CC539662BE0257400DBFD30 /* WaterDataChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539652BE0257400DBFD30 /* WaterDataChart.swift */; };
 		4CC539682BE0267900DBFD30 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CC539672BE0267900DBFD30 /* cleanboot_swift */; };
 		4CC5396A2BE0267E00DBFD30 /* cleanboot_swift in Frameworks */ = {isa = PBXBuildFile; productRef = 4CC539692BE0267E00DBFD30 /* cleanboot_swift */; };
 		4CC539702BE5889C00DBFD30 /* toggle_favorite_station_use_case.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5396F2BE5889C00DBFD30 /* toggle_favorite_station_use_case.swift */; };
@@ -105,7 +105,7 @@
 		4CC5395E2BE0099000DBFD30 /* historical_data_point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point.swift; sourceTree = "<group>"; };
 		4CC539602BE00AB000DBFD30 /* historical_data_point_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point_model.swift; sourceTree = "<group>"; };
 		4CC539622BE00C3800DBFD30 /* historical_data_point_mapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point_mapper.swift; sourceTree = "<group>"; };
-		4CC539652BE0257400DBFD30 /* water_data_chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = water_data_chart.swift; sourceTree = "<group>"; };
+		4CC539652BE0257400DBFD30 /* WaterDataChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterDataChart.swift; sourceTree = "<group>"; };
 		4CC5396F2BE5889C00DBFD30 /* toggle_favorite_station_use_case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toggle_favorite_station_use_case.swift; sourceTree = "<group>"; };
 		4CC539712BE599CE00DBFD30 /* water_level_local_data_source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = water_level_local_data_source.swift; sourceTree = "<group>"; };
 		4CC539732BE59CEB00DBFD30 /* water_level_local_data_source_impl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = water_level_local_data_source_impl.swift; sourceTree = "<group>"; };
@@ -239,7 +239,7 @@
 		4CC539642BE0255C00DBFD30 /* water_data_chart */ = {
 			isa = PBXGroup;
 			children = (
-				4CC539652BE0257400DBFD30 /* water_data_chart.swift */,
+				4CC539652BE0257400DBFD30 /* WaterDataChart.swift */,
 			);
 			path = water_data_chart;
 			sourceTree = "<group>";
@@ -891,7 +891,7 @@
 				4CF840FD2BD5E666001C2DD7 /* bootstrap_view_controller.swift in Sources */,
 				4CC539482BDECB6A00DBFD30 /* station_map_controller.swift in Sources */,
 				4CC539592BDEFF2400DBFD30 /* station_detail_view_controller.swift in Sources */,
-				4CC539662BE0257400DBFD30 /* water_data_chart.swift in Sources */,
+				4CC539662BE0257400DBFD30 /* WaterDataChart.swift in Sources */,
 				4CF8410A2BD5E9CD001C2DD7 /* AppDelegate.swift in Sources */,
 				4CC5394C2BDECBFB00DBFD30 /* station_map_view_model.swift in Sources */,
 				4CC539762BE7524200DBFD30 /* get_favorite_status_use_case.swift in Sources */,
