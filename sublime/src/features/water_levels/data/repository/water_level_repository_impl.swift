@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUICore
 
 class WaterLevelRepositoryImpl: WaterLevelRepository {
     
@@ -44,7 +45,7 @@ class WaterLevelRepositoryImpl: WaterLevelRepository {
         return localDataSource.getFavoriteStatus(stationCode: stationCode)
     }
     
-    func getFavorites() throws -> [String] {
+    func getFavorites() throws -> Binding<[String]> {
         return localDataSource.getFavorites()
     }
 }

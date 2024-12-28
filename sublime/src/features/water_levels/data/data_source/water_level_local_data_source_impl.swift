@@ -6,17 +6,19 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct WaterLevelLocalDataSourceImpl: WaterLevelLocalDataSource {
     
-    var favorites: NSSet?
+    
+    var favorites: NSMutableSet?
     
     init() {
         do {
-            if let favorites = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSSet.self, NSString.self], from: try Data.init(
+            if let favorites = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSMutableSet.self, NSString.self], from: try Data.init(
                 contentsOf: archivePath()
             )) {
-                self.favorites = favorites as? NSSet
+                self.favorites = favorites as? NSMutableSet
                 print(favorites)
             } else {
                 print("no favorites loaded")
@@ -57,7 +59,7 @@ struct WaterLevelLocalDataSourceImpl: WaterLevelLocalDataSource {
             } else {
                 mutableSet.add(bridgedCode)
             }
-            favorites = mutableSet.copy() as? NSSet
+            favorites = mutableSet
             
             let data = try NSKeyedArchiver.archivedData(
                 withRootObject: favorites ?? {},
@@ -78,7 +80,17 @@ struct WaterLevelLocalDataSourceImpl: WaterLevelLocalDataSource {
         return favorites?.contains(stationCode) ?? false
     }
     
-    func getFavorites() -> [String] {
-        return favorites?.allObjects as! [String]
+    func getFavorites() -> Binding<[String]> {
+        return Binding {
+            favorites?.allObjects as? [String] ?? [String]()
+        } set: { stationCode in
+            let favorites = favorites?.allObjects as? [String] ?? [String]()
+            for code in favorites {
+                if let index = favorites.firstIndex(where: { $0 == code }) {
+                    self.favorites?.remove(favorites[index])
+                    self.favorites?.add(code)
+                }
+            }
+        }
     }
 }
