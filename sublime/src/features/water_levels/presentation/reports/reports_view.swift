@@ -63,12 +63,15 @@ struct ReportsView: View {
                 }
             }
         case .error:
-            Button {
-                Task {
-                    await reportsData.reloadData()
+            VStack {
+                Label("Something went wrong", systemImage: "exclamationmark.triangle")
+                Button {
+                    Task {
+                        await reportsData.reloadData()
+                    }
+                } label: {
+                    Text("Try again")
                 }
-            } label: {
-                Text("Whoops\nTry again")
             }
         }
     }
