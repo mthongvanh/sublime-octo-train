@@ -7,14 +7,16 @@
 
 import SwiftUI
 
-struct reports_view: View {
+struct ReportsView: View {
     
-    private var reportsViewModel: ReportsViewModel?
     @State private var reportsData: ReportsData
+    private var onTapped: ((WaterLevelReport) -> Void)?
     
-    init(reportsViewModel: ReportsViewModel?, reportsData: ReportsData) {
-        self.reportsViewModel = reportsViewModel
+    init(reportsData: ReportsData,
+         onTapped: ((WaterLevelReport) -> Void)?
+    ) {
         self.reportsData = reportsData
+        self.onTapped = onTapped
     }
     
     var body: some View {
@@ -26,47 +28,68 @@ struct reports_view: View {
         case .loading:
             ProgressView()
         case .loaded:
-            VStack {
-                List {
-                    ForEach(reportsData.displayedData) { section in
-                        Section(header: Text(section.title)) {
-                            ForEach(section.data) { report in
-                                HStack(content: {
-                                    VStack(alignment: .leading, content: {
-                                        Text(
-                                            "\(report.waterbody) @ \(report.station)")
-                                        HStack(content: {
-                                            Text("flow: \(report.speed) m^3/s, depth: \(report.depth) cm").font(.subheadline)
-                                        })
-                                    })
-                                    Spacer()
-                                    Button(action: {
-                                        Task {
-                                            await reportsData.didToggleFavorite(stationCode:report.stationCode)
-                                        }
-                                    }, label: {
-                                        let favorite = reportsData.isFavorite(stationCode: report.stationCode)
-                                        Image(
-                                            systemName: favorite
-                                            ? "star.fill"
-                                            : "star"
-                                        ).tint(favorite ? Color.yellow : Color.gray)
-                                    })
-                                })
+            NavigationStack {
+                VStack {
+                    List {
+                        ForEach(reportsData.displayedData) { s in
+                            let section: ReportSection = s
+                            Section(header: Text(section.title)) {
+                                ForEach(section.data) { r in
+                                    let report: WaterLevelReport = r
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text("\(report.waterbody) @ \(report.station)")
+                                            Text("Speed: \(report.speed, specifier: "%.2f") m/s - Depth: \(report.depth, specifier: "%.0f") cm").font(.footnote)
+                                        }.frame(alignment: .topLeading)
+                                        Spacer()
+                                        Button(action: {
+                                            Task {
+                                                await reportsData.didToggleFavorite(stationCode: report.stationCode)
+                                            }
+                                        }) {
+                                            let favorited: Bool = reportsData.favoriteCodes.contains(report.stationCode)
+                                            let systemName: String = favorited ? "star.fill" : "star"
+                                            let color: Color = favorited ? Color.yellow : Color.gray
+                                            Image.init(systemName: systemName).foregroundColor(color)
+                                        }.buttonStyle(PlainButtonStyle())
+                                    }.onTapGesture {
+                                        guard let onTapped else { return }
+                                        onTapped(report)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         case .error:
-            Text("Encountered an error while loading the data")
+            Button {
+                Task {
+                    await reportsData.reloadData()
+                }
+            } label: {
+                Text("Whoops\nTry again")
+            }
         }
+    }
+    
+    func favoriteLabel(stationCode: String) -> some View {
+        let favorited: Bool = reportsData.favoriteCodes.contains(stationCode)
+        let systemName: String = favorited ? "star.fill" : "star"
+        let color: Color = favorited ? .yellow : .gray
+        return Image.init(systemName: systemName).foregroundColor(color)
     }
 }
 
 #Preview {
-    let mockGetFavorites = MockGetFavorites(repo: MockWaterLevelRepo())
-    let reports = MockReportsViewModel(getFavoriteStatus: mockGetFavorites)
+    let mockWaterLevelRepo = MockWaterLevelRepo()
+    let mockGetFavorites = MockGetFavorites(repo: mockWaterLevelRepo)
+    let mockToggleFavorites = MockToggleFavorites(repo: mockWaterLevelRepo)
+    let reports = MockReportsViewModel(
+        getFavoriteStatus: mockGetFavorites,
+        getHistoricalData: GetHistoricalDataUseCase(repo: mockWaterLevelRepo),
+        toggleFavorite: mockToggleFavorites
+    )
     let reportsData = ReportsData(reports: reports.reports, waterLevelRepo: MockWaterLevelRepo())
-    return reports_view(reportsViewModel: reports, reportsData: reportsData)
+    ReportsView(reportsData: reportsData, onTapped: {(report) in print("tapped")})
 }

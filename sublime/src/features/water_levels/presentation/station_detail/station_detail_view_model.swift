@@ -8,6 +8,7 @@
 import Foundation
 import cleanboot_swift
 import SwiftSoup
+import SwiftUICore
 
 class StationDetailViewModel: ViewModel<StationDetailViewModel> {
     
@@ -15,10 +16,10 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
     var getHistoricalDataUseCase: GetHistoricalDataUseCase
     
     var dataPoints = [HistoricalDataPoint]()
-    //    var dataPointsParsed: [String:[String:[String: HistoricalDataPoint]]]?
     var chartItems = [ChartItemModel]()
-    var dataType = WaterLevelValueType.depth
+    var dataType = WaterLevelValueType.speed
     var dataSpan = ObservationSpan.sevenDays
+    
     
     init(
         stationReport: WaterLevelReport,
@@ -69,7 +70,7 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
             self.dataPoints = dataPoints
             hasData = try await filterWaterReports(
                 stationData: dataPoints,
-                span: dataSpan,
+                span: span,
                 dataType: dataType
             )
         case let .failure(error):
@@ -99,7 +100,7 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
         let dataPointsParsed = organizeData(historicalData: updatedDataPoints)
         let models = try generateChartItemModels(dataPointMap: dataPointsParsed, span: span, valueType: dataType)
         chartItems.removeAll()
-        chartItems.append(contentsOf: models)
+        chartItems = models
         
         return !updatedDataPoints.isEmpty
     }
@@ -261,6 +262,20 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
         return models
     }
     
+    func getChartItems() -> Binding<[ChartItemModel]> {
+        return Binding {
+            self.chartItems
+        } set: { stationCode in
+            let chartItems = self.chartItems
+            for chartItem in chartItems {
+                if let index = chartItems.firstIndex(where: { $0 == chartItem }) {
+                    self.chartItems.remove(at: index)
+                    self.chartItems.append(chartItem)
+                }
+            }
+        }
+    }
+    
     func availableSpanLengths() -> [ObservationSpan] {
         return ObservationSpan.allCases.compactMap { span in
             if span != .latest {
@@ -272,7 +287,7 @@ class StationDetailViewModel: ViewModel<StationDetailViewModel> {
     }
 }
 
-struct ChartItemModel: Identifiable {
+struct ChartItemModel: Identifiable, Equatable {
     var id = UUID()
     
     var xAxisIdentifier: Date
