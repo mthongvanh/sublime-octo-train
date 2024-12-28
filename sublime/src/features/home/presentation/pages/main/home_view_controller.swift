@@ -14,7 +14,6 @@ class HomeViewController: UIViewController, BaseViewController {
     
     var viewModel: HomeViewModel
     
-    var filterViewController: ReportFilterViewController
     var stationMapViewController: StationMapViewController
     
     var reportsData: ReportsData
@@ -38,21 +37,6 @@ class HomeViewController: UIViewController, BaseViewController {
             let smc = StationMapController(viewModel: smvm)
             stationMapViewController = StationMapViewController(
                 controller: smc
-            )
-            
-            let filterVM = ReportsViewModel(
-                getFavoriteStatus: try AppServiceLocator.shared.get(
-                    serviceType: GetFavoriteStatusUseCase.self
-                ),
-                getHistoricalData: try AppServiceLocator.shared.get(
-                    serviceType: GetHistoricalDataUseCase.self
-                ),
-                toggleFavorite: toggleFavorite
-            )
-            let filterController = ReportsController(viewModel: filterVM, toggleFavorite: toggleFavorite)
-            filterViewController = ReportFilterViewController(
-                controller: filterController,
-                style: .plain
             )
 
             reportsData = ReportsData(waterLevelRepo: try AppServiceLocator.shared.get(
@@ -87,15 +71,12 @@ class HomeViewController: UIViewController, BaseViewController {
             filterSearchBar.delegate = self
             filterSearchBar.showsCancelButton = true
             
-            filterViewController.tableView.isHidden = true
-            
             reportsHost = setupReports()
             
             // make sure to add subviews before setting up constraints
             view.addSubview(stationMapViewController.mapView)
             view.addSubview(reportsContainer)
             view.addSubview(filterSearchBar)
-            view.addSubview(filterViewController.tableView)
             
             setupConstraints()
         } catch {
@@ -122,16 +103,7 @@ class HomeViewController: UIViewController, BaseViewController {
         
         reportsContainer.snp.makeConstraints { make in
             make.top.equalTo(filterSearchBar.snp.bottom)
-        }
-        
-        filterViewController.tableView.snp.makeConstraints({ make in
-            make.leading.trailing.bottom.equalToSuperview()
-        })
-        
-        filterViewController.tableView.snp.makeConstraints { make in
-            make.top.equalTo(filterSearchBar.snp.bottom)
-        }
-    }
+        }    }
     
     func setupReports() -> UIHostingController<ReportsView> {
         /// cleanup old hosting controller and chart
@@ -160,29 +132,22 @@ class HomeViewController: UIViewController, BaseViewController {
     typealias T = HomeViewModel
     
     func onModelUpdate(viewModel: T) {
-        filterViewController.tableView.reloadData()
         reportsData.loadReports(reports: viewModel.reports)
     }
     
     func onModelReady(viewModel: T) {
-        filterViewController.controller?.viewModel.reportCollection = viewModel.reports
         stationMapViewController.controller.updateStations(reports: viewModel.reports)
     }
 }
 
 extension HomeViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filterViewController.tableView.isHidden = (searchBar.text?.count ?? 0) < 3
-        filterViewController.controller?.filter(text: searchText)
-        
-        stationMapViewController.controller.updateStations(
-            filterText: filterViewController.tableView.isHidden ? nil : searchText,
-            reports: viewModel.reports
-        )
+        reportsData.filter(query: searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+        reportsData.filter()
     }
 }
 
