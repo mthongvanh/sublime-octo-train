@@ -105,7 +105,12 @@ class ReportsData {
     @MainActor
     func didToggleFavorite(stationCode: String) async {
         _ = await toggleFavorite(stationCode: stationCode)
-        let r = sortReports(reports: _reportCollection)
+        var currentlyDisplayed = [WaterLevelReport]()
+        displayedData.forEach { section in
+            currentlyDisplayed.append(contentsOf: section.data)
+        }
+        
+        let r = sortReports(reports: currentlyDisplayed)
         updateDisplayedData(favorites: r.favorites, others: r.other)
     }
     
@@ -131,6 +136,11 @@ class ReportsData {
         // Strip out all the leading and trailing spaces.
         let whitespaceCharacterSet = CharacterSet.whitespaces
         let strippedString = query.trimmingCharacters(in: whitespaceCharacterSet)
+        
+        if strippedString.isEmpty {
+            loadReports(reports: reportCollection)
+            return
+        }
         
         let filteredResults = reportCollection.compactMap({ report in
             if (report.waterbody.range(
