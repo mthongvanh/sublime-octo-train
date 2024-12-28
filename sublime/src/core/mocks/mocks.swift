@@ -51,6 +51,14 @@ class MockGetFavorites: GetFavoriteStatusUseCase {
     
 }
 
+class MockToggleFavorites: ToggleFavoriteStationUseCase {
+    
+}
+
+class MockGetHistoricalData: GetHistoricalDataUseCase {
+    
+}
+
 class MockWaterLevelRepo: WaterLevelRepository {
     
     func getWaterLevels() async throws -> [WaterLevelReport] {
@@ -89,4 +97,29 @@ class MockWaterLevelRepo: WaterLevelRepository {
         })
     }
     
+}
+
+class MockStationDetailViewModel: StationDetailViewModel {
+    override func fetchData(span: ObservationSpan, dataType: WaterLevelValueType) async throws -> Bool {
+        var hasData = false
+        let result = try await getHistoricalDataUseCase.execute(
+            params: (
+                span,
+                stationReport.stationCode
+            )
+        )
+        switch result {
+        case let .success(dataPoints):
+            self.dataPoints = dataPoints
+            hasData = try await filterWaterReports(
+                stationData: dataPoints,
+                span: dataSpan,
+                dataType: dataType
+            )
+        case let .failure(error):
+            throw(error)
+        }
+        return hasData
+    }
+
 }

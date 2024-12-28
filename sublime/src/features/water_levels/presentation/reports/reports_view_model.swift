@@ -9,7 +9,7 @@ import Foundation
 import cleanboot_swift
 import SwiftUI
 
-@Observable class ReportsViewModel: ViewModel<ReportsViewModel> {
+class ReportsViewModel: ViewModel<ReportsViewModel> {
     
     var reportCollection = [WaterLevelReport]()
     private var _displayedReports = [WaterLevelReport]()
@@ -18,15 +18,22 @@ import SwiftUI
     var reportCellViewModels = [ReportCellViewModel]()
     
     var getFavoriteStatus: GetFavoriteStatusUseCase?
+    private var getHistoricalData: GetHistoricalDataUseCase
+    private var toggleFavoriteUseCase: ToggleFavoriteStationUseCase
     
     init(
         reports: [WaterLevelReport] = [WaterLevelReport](),
         reportCellViewModels: [ReportCellViewModel] = [ReportCellViewModel](),
-        getFavoriteStatus: GetFavoriteStatusUseCase
+        getFavoriteStatus: GetFavoriteStatusUseCase,
+        getHistoricalData: GetHistoricalDataUseCase,
+        toggleFavorite: ToggleFavoriteStationUseCase
     ) {
         self.reportCollection = reports
         self.reportCellViewModels = reportCellViewModels
         self.getFavoriteStatus = getFavoriteStatus
+        
+        self.getHistoricalData = getHistoricalData
+        self.toggleFavoriteUseCase = toggleFavorite
         
         super.init(onModelReady: nil, onModelUpdate: nil)
     }
