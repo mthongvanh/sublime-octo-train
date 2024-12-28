@@ -31,7 +31,8 @@ class BootstrapViewController: UIViewController {
         view.backgroundColor = UIColor.orange
         
         activityIndicator.startAnimating()
-        let container = UIView()
+        let container = UIImageView(image: UIImage(named: "appIconBg"))
+        container.contentMode = .scaleAspectFill
         container.backgroundColor = UIColor.blue
         container.addSubview(activityIndicator)
         activityIndicator.snp.makeConstraints { make in
@@ -39,7 +40,7 @@ class BootstrapViewController: UIViewController {
         }
         view.addSubview(container)
         container.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.edges.equalToSuperview()
         }
         
     }

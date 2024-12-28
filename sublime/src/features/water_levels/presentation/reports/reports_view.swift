@@ -22,11 +22,11 @@ struct ReportsView: View {
     var body: some View {
         switch reportsData.dataState {
         case .initialized:
-            ProgressView().task {
+            redactedViews.task {
                 await reportsData.reloadData()
             }
         case .loading:
-            ProgressView()
+            redactedViews
         case .loaded:
             NavigationStack {
                 VStack {
@@ -81,6 +81,23 @@ struct ReportsView: View {
         let systemName: String = favorited ? "star.fill" : "star"
         let color: Color = favorited ? .yellow : .gray
         return Image.init(systemName: systemName).foregroundColor(color)
+    }
+    
+    var redactedViews: some View {
+        List {
+            VStack {
+                Text("Loading...").font(.headline).redacted(reason: .placeholder)
+                Text("Loading...").font(.subheadline).redacted(reason: .placeholder)
+            }
+            VStack {
+                Text("Loading...").font(.headline).redacted(reason: .placeholder)
+                Text("Loading...").font(.subheadline).redacted(reason: .placeholder)
+            }
+            VStack {
+                Text("Loading...").font(.headline).redacted(reason: .placeholder)
+                Text("Loading...").font(.subheadline).redacted(reason: .placeholder)
+            }
+        }
     }
 }
 
