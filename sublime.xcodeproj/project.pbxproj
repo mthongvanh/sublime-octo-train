@@ -10,6 +10,7 @@
 		088C5593CD8DE82F0CF60310 /* Pods_sublime_sublimeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F21D6FA21C87565D4256CE2E /* Pods_sublime_sublimeUITests.framework */; };
 		4C01201B2BD7E9E8002744C9 /* water_level_report_arso.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C01201A2BD7E9E8002744C9 /* water_level_report_arso.swift */; };
 		4C01201D2BD90EEE002744C9 /* get_water_levels_use_case.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C01201C2BD90EEE002744C9 /* get_water_levels_use_case.swift */; };
+		4C23A9BE2D17074300CFC951 /* station_detail_view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23A9BD2D17073E00CFC951 /* station_detail_view.swift */; };
 		4CB773C12CDF2B2B00A8B3A9 /* reports_view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB773C02CDF2B2B00A8B3A9 /* reports_view.swift */; };
 		4CB773C32CE1780C00A8B3A9 /* reports_data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB773C22CE1780C00A8B3A9 /* reports_data.swift */; };
 		4CB773C62CE2762D00A8B3A9 /* mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB773C52CE2762D00A8B3A9 /* mocks.swift */; };
@@ -85,6 +86,7 @@
 		388A3A09F26CF62AE6BDD941 /* Pods-sublimeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sublimeTests.debug.xcconfig"; path = "Target Support Files/Pods-sublimeTests/Pods-sublimeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		4C01201A2BD7E9E8002744C9 /* water_level_report_arso.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = water_level_report_arso.swift; sourceTree = "<group>"; };
 		4C01201C2BD90EEE002744C9 /* get_water_levels_use_case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = get_water_levels_use_case.swift; sourceTree = "<group>"; };
+		4C23A9BD2D17073E00CFC951 /* station_detail_view.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_detail_view.swift; sourceTree = "<group>"; };
 		4CB773C02CDF2B2B00A8B3A9 /* reports_view.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_view.swift; sourceTree = "<group>"; };
 		4CB773C22CE1780C00A8B3A9 /* reports_data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_data.swift; sourceTree = "<group>"; };
 		4CB773C52CE2762D00A8B3A9 /* mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mocks.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 		4CC539552BDEFE3F00DBFD30 /* station_detail */ = {
 			isa = PBXGroup;
 			children = (
+				4C23A9BD2D17073E00CFC951 /* station_detail_view.swift */,
 				4CC539562BDEFF1500DBFD30 /* station_detail_controller.swift */,
 				4CC539582BDEFF2400DBFD30 /* station_detail_view_controller.swift */,
 				4CC5395A2BDEFF3300DBFD30 /* station_detail_view_model.swift */,
@@ -902,6 +905,7 @@
 				4CF795252BD7298700EE3212 /* water_level_repository_impl.swift in Sources */,
 				4CB773C32CE1780C00A8B3A9 /* reports_data.swift in Sources */,
 				4CC5395F2BE0099000DBFD30 /* historical_data_point.swift in Sources */,
+				4C23A9BE2D17074300CFC951 /* station_detail_view.swift in Sources */,
 				4CF7952A2BD7AC2F00EE3212 /* water_level_remote_data_source_impl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

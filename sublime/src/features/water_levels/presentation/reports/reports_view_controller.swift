@@ -27,7 +27,9 @@ class ReportsViewController: UITableViewController, BaseViewController {
                 viewModel: ReportsViewModel(
                     getFavoriteStatus: try AppServiceLocator.shared.get(
                         serviceType: GetFavoriteStatusUseCase.self
-                    )
+                    ),
+                    getHistoricalData: try AppServiceLocator.shared.get(serviceType: GetHistoricalDataUseCase.self),
+                    toggleFavorite: try AppServiceLocator.shared.get(serviceType: ToggleFavoriteStationUseCase.self)
                 ),
                 toggleFavorite: try AppServiceLocator.shared.get(
                     serviceType: ToggleFavoriteStationUseCase.self

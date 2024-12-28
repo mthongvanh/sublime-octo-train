@@ -43,7 +43,7 @@ class ReportsData {
     
     private var waterLevelRepository: WaterLevelRepository
     
-    private var favoriteCodes = [String]()
+    private(set) var favoriteCodes = [String]()
     
     var dataState = DataState.initialized
     

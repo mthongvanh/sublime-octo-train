@@ -38,6 +38,7 @@ struct water_data_chart: View {
     
     init(dataPoints: WaterChartData) {
         self.dataPoints = dataPoints
+        print(dataPoints.dataType)
     }
     
     var body: some View {

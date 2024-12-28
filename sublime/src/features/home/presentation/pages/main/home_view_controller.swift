@@ -19,10 +19,9 @@ class HomeViewController: UIViewController, BaseViewController {
     
     var reportsData: ReportsData
     
-    var reportsHost: UIHostingController<reports_view>?
+    var reportsHost: UIHostingController<ReportsView>?
     var reportsContainer: UIView = UIView()
-    var reportsView: reports_view
-    
+    var reportsView: ReportsView?
     
     var filterSearchBar = UISearchBar()
     
@@ -44,7 +43,12 @@ class HomeViewController: UIViewController, BaseViewController {
             let filterVM = ReportsViewModel(
                 getFavoriteStatus: try AppServiceLocator.shared.get(
                     serviceType: GetFavoriteStatusUseCase.self
-                ))
+                ),
+                getHistoricalData: try AppServiceLocator.shared.get(
+                    serviceType: GetHistoricalDataUseCase.self
+                ),
+                toggleFavorite: toggleFavorite
+            )
             let filterController = ReportsController(viewModel: filterVM, toggleFavorite: toggleFavorite)
             filterViewController = ReportFilterViewController(
                 controller: filterController,
@@ -54,8 +58,6 @@ class HomeViewController: UIViewController, BaseViewController {
             reportsData = ReportsData(waterLevelRepo: try AppServiceLocator.shared.get(
                 serviceType: WaterLevelRepository.self
             ))
-            
-            reportsView = reports_view(reportsViewModel: nil, reportsData: reportsData)
             
             super.init(nibName: nil, bundle: nil)
         } catch {
@@ -74,47 +76,31 @@ class HomeViewController: UIViewController, BaseViewController {
     
     // view setup
     func setupViews() {
-        
-        filterSearchBar.delegate = self
-        filterSearchBar.showsCancelButton = true
-        
-        // remove this after implementing with swiftui version of reports list
-//        reportsViewController.controller?.onSelect = { (indexPath, report) in
-//            if (report.station == self.stationMapViewController.controller.viewModel.lastSelectedLocation?.station) {
-//                do {
-//                    let vm = StationDetailViewModel(
-//                        stationReport: report,
-//                        historicalData: try AppServiceLocator.shared.get(
-//                            serviceType: GetHistoricalDataUseCase.self
-//                        )
-//                    )
-//                    let controller = StationDetailController(viewModel: vm)
-//                    
-//                    self.navigationController?.pushViewController(
-//                        StationDetailViewController(
-//                            controller: controller
-//                        ),
-//                        animated: true
-//                    )
-//                } catch {
-//                    debugPrint(error)
-//                }
-//            } else {
-//                self.stationMapViewController.controller.viewModel.lastSelectedLocation = report
-//            }
-//        }
-        
-        filterViewController.tableView.isHidden = true
-        
-        reportsHost = setupReports()
-        
-        // make sure to add subviews before setting up constraints
-        view.addSubview(stationMapViewController.mapView)
-        view.addSubview(reportsContainer)
-        view.addSubview(filterSearchBar)
-        view.addSubview(filterViewController.tableView)
-        
-        setupConstraints()
+        do {
+            let getHistoricalDataUseCase = try AppServiceLocator.shared.get(serviceType: GetHistoricalDataUseCase.self)
+            
+            reportsView = ReportsView(reportsData: reportsData,
+                                       onTapped: { report in
+                self.navigateToReport(report: report, historicalData: getHistoricalDataUseCase)
+            })
+            
+            filterSearchBar.delegate = self
+            filterSearchBar.showsCancelButton = true
+            
+            filterViewController.tableView.isHidden = true
+            
+            reportsHost = setupReports()
+            
+            // make sure to add subviews before setting up constraints
+            view.addSubview(stationMapViewController.mapView)
+            view.addSubview(reportsContainer)
+            view.addSubview(filterSearchBar)
+            view.addSubview(filterViewController.tableView)
+            
+            setupConstraints()
+        } catch {
+            print(error)
+        }
     }
     
     func setupConstraints() {
@@ -147,7 +133,7 @@ class HomeViewController: UIViewController, BaseViewController {
         }
     }
     
-    func setupReports() -> UIHostingController<reports_view> {
+    func setupReports() -> UIHostingController<ReportsView> {
         /// cleanup old hosting controller and chart
         if (reportsHost != nil) {
             reportsHost?.removeFromParent()
@@ -156,7 +142,7 @@ class HomeViewController: UIViewController, BaseViewController {
         }
         
         let host = UIHostingController(
-            rootView: reportsView
+            rootView: reportsView!
         )
         host.sizingOptions = .intrinsicContentSize
         host.view.translatesAutoresizingMaskIntoConstraints = false
@@ -197,5 +183,21 @@ extension HomeViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+    }
+}
+
+/// Navigation section
+extension HomeViewController {
+    func navigateToReport(report: WaterLevelReport, historicalData: GetHistoricalDataUseCase) {
+        self.navigationController?.pushViewController(
+            UIHostingController(
+                rootView: StationDetail(
+                    viewModel: StationDetailViewModel(
+                        stationReport: report,
+                        historicalData: historicalData
+                    )
+                )
+            ),
+            animated: true)
     }
 }
