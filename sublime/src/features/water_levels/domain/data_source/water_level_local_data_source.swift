@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUICore
 
 protocol WaterLevelLocalDataSource {
     mutating func toggleStationFavorite(
@@ -17,5 +18,5 @@ protocol WaterLevelLocalDataSource {
     /// Collection of favorite water bodies
     ///
     /// Returns a list of water station codes
-    func getFavorites() -> [String]
+    func getFavorites() -> Binding<[String]>
 }

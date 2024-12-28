@@ -23,7 +23,17 @@ struct ReportSection: Identifiable {
     }
 }
 
-@Observable class ReportsData {
+
+enum DataState {
+    case initialized;
+    case loaded;
+    case loading;
+    case error;
+}
+
+
+@Observable
+class ReportsData {
     
     /// user-facing water body reports split by
     var displayedData = [ReportSection]()
@@ -35,27 +45,40 @@ struct ReportSection: Identifiable {
     
     private var favoriteCodes = [String]()
     
+    var dataState = DataState.initialized
+    
     init(reports: [WaterLevelReport] = [WaterLevelReport](), waterLevelRepo: WaterLevelRepository) {
         reportCollection = reports
+        if !reports.isEmpty {
+            dataState = .loaded
+        }
         waterLevelRepository = waterLevelRepo
     }
     
     @MainActor
     // @MainActor guarantees that updates happen on main thread
-    func loadData() async {
+    func reloadData() async {
+        dataState = .loading
         do {
             _reportCollection = try await waterLevelRepository.getWaterLevels()
             
-            self.favoriteCodes = try waterLevelRepository.getFavorites()
+            self.favoriteCodes = try waterLevelRepository.getFavorites().wrappedValue
             
             let r = sortReports(reports: _reportCollection)
-            updateReports(favorites: r.favorites, others: r.other)
+            updateDisplayedData(favorites: r.favorites, others: r.other)
+            dataState = .loaded
         } catch {
             debugPrint("error loading reports data \(error)")
+            dataState = .error
         }
     }
     
-    func updateReports(favorites: [WaterLevelReport] = [WaterLevelReport](), others: [WaterLevelReport] = [WaterLevelReport]()) {
+    func loadReports(reports: [WaterLevelReport] = [WaterLevelReport]()) {
+        let r = sortReports(reports: reports)
+        updateDisplayedData(favorites: r.favorites, others: r.other)
+    }
+    
+    func updateDisplayedData(favorites: [WaterLevelReport] = [WaterLevelReport](), others: [WaterLevelReport] = [WaterLevelReport]()) {
         var reportSections = [ReportSection]()
         if (!favorites.isEmpty) {
             reportSections.append(
@@ -83,7 +106,7 @@ struct ReportSection: Identifiable {
     func didToggleFavorite(stationCode: String) async {
         _ = await toggleFavorite(stationCode: stationCode)
         let r = sortReports(reports: _reportCollection)
-        updateReports(favorites: r.favorites, others: r.other)
+        updateDisplayedData(favorites: r.favorites, others: r.other)
     }
     
     @MainActor
@@ -104,8 +127,28 @@ struct ReportSection: Identifiable {
         return false
     }
     
-    func fetchFavoriteStatus(stationCode: String) {
+    func filter(query: String = "") {
+        // Strip out all the leading and trailing spaces.
+        let whitespaceCharacterSet = CharacterSet.whitespaces
+        let strippedString = query.trimmingCharacters(in: whitespaceCharacterSet)
         
+        let filteredResults = reportCollection.compactMap({ report in
+            if (report.waterbody.range(
+                of: strippedString,
+                options: [.caseInsensitive]
+            )?.isEmpty == false
+                || report.station.range(
+                    of: strippedString,
+                    options: [.caseInsensitive]
+                )?.isEmpty == false)
+            {
+                return report
+            } else {
+                return nil
+            }
+        })
+        
+        loadReports(reports: filteredResults)
     }
     
     func sortReports(reports: [WaterLevelReport]) -> (favorites: [WaterLevelReport], other: [WaterLevelReport]) {

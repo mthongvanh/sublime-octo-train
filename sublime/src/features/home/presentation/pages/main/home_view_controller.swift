@@ -175,6 +175,7 @@ class HomeViewController: UIViewController, BaseViewController {
     
     func onModelUpdate(viewModel: T) {
         filterViewController.tableView.reloadData()
+        reportsData.loadReports(reports: viewModel.reports)
     }
     
     func onModelReady(viewModel: T) {

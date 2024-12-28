@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class MockReportsViewModel: ReportsViewModel {
     override var reports: [WaterLevelReport] {
@@ -51,6 +52,7 @@ class MockGetFavorites: GetFavoriteStatusUseCase {
 }
 
 class MockWaterLevelRepo: WaterLevelRepository {
+    
     func getWaterLevels() async throws -> [WaterLevelReport] {
         [
             WaterLevelReport(
@@ -81,8 +83,10 @@ class MockWaterLevelRepo: WaterLevelRepository {
         true
     }
     
-    func getFavorites() throws -> [String] {
-        ["stationCode"]
+    func getFavorites() throws -> Binding<[String]> {
+        Binding<[String]>(get: { ["stationCode"] }, set: { _ in
+            
+        })
     }
     
 }
