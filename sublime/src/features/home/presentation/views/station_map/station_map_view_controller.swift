@@ -22,6 +22,7 @@ class StationMapViewController: UIViewController, BaseViewController {
         
         controller.viewModel.onModelReady = onModelReady(viewModel:)
         controller.viewModel.onModelUpdate = onModelUpdate(viewModel:)
+        setupMapView()
     }
     
     required init?(coder: NSCoder) {
@@ -30,7 +31,10 @@ class StationMapViewController: UIViewController, BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupMapView()
+    }
+    
+    func setupMapView() {
         // setup map view
         mapView.delegate = controller;
         mapView.setRegion(

@@ -63,19 +63,15 @@ class StationMapViewModel: ViewModel<StationMapViewModel> {
     }
     
     func updateStations(stations: [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]) {
-        do {
-            annotations = try stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
-                SublimeMapAnnotation(
-                    title: key.components(separatedBy: CharacterSet(["+"])).first!,
-                    coordinate: value.1,
-                    flowLevel: value.2
-                )
-            })
-            if let onModelUpdate = onModelUpdate {
-                onModelUpdate(self)
-            }
-        } catch {
-            debugPrint(error)
+        annotations = stations.map<MKAnnotation>({ (key: String, value: (String, CLLocationCoordinate2D, WaterFlowLevel)) in
+            SublimeMapAnnotation(
+                title: key.components(separatedBy: CharacterSet(["+"])).first!,
+                coordinate: value.1,
+                flowLevel: value.2
+            )
+        })
+        if let onModelUpdate = onModelUpdate {
+            onModelUpdate(self)
         }
     }
 }

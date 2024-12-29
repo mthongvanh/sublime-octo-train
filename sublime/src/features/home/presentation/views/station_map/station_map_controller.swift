@@ -61,13 +61,13 @@ extension StationMapController: MKMapViewDelegate {
                 annotation: sublime,
                 reuseIdentifier: "waterStationAnnoation"
             )
-            view.glyphText = sublime.title
+            view.glyphImage = UIImage(systemName: "figure.fishing")
             annotationView = view
             switch sublime.flowLevel {
             case .low:
-                view.markerTintColor = UIColor.green
+                view.markerTintColor = UIColor.systemGreen
             case .high:
-                view.markerTintColor = UIColor.red
+                view.markerTintColor = UIColor.systemRed
             default:
                 view.markerTintColor = UIColor.yellow
             }
