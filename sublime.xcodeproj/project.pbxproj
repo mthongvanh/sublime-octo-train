@@ -14,16 +14,11 @@
 		4CB773C12CDF2B2B00A8B3A9 /* reports_view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB773C02CDF2B2B00A8B3A9 /* reports_view.swift */; };
 		4CB773C32CE1780C00A8B3A9 /* reports_data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB773C22CE1780C00A8B3A9 /* reports_data.swift */; };
 		4CB773C62CE2762D00A8B3A9 /* mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB773C52CE2762D00A8B3A9 /* mocks.swift */; };
-		4CC5393E2BDEC81E00DBFD30 /* reports_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5393D2BDEC81E00DBFD30 /* reports_view_controller.swift */; };
-		4CC539402BDEC83400DBFD30 /* reports_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5393F2BDEC83400DBFD30 /* reports_controller.swift */; };
 		4CC539422BDEC84000DBFD30 /* reports_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539412BDEC84000DBFD30 /* reports_view_model.swift */; };
 		4CC539452BDEC87E00DBFD30 /* report_cell_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539442BDEC87E00DBFD30 /* report_cell_view_model.swift */; };
 		4CC539482BDECB6A00DBFD30 /* station_map_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539472BDECB6A00DBFD30 /* station_map_controller.swift */; };
 		4CC5394A2BDECB7700DBFD30 /* station_map_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539492BDECB7700DBFD30 /* station_map_view_controller.swift */; };
 		4CC5394C2BDECBFB00DBFD30 /* station_map_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5394B2BDECBFB00DBFD30 /* station_map_view_model.swift */; };
-		4CC539512BDEF2B100DBFD30 /* report_filter_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539502BDEF2B100DBFD30 /* report_filter_view_controller.swift */; };
-		4CC539572BDEFF1500DBFD30 /* station_detail_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539562BDEFF1500DBFD30 /* station_detail_controller.swift */; };
-		4CC539592BDEFF2400DBFD30 /* station_detail_view_controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC539582BDEFF2400DBFD30 /* station_detail_view_controller.swift */; };
 		4CC5395B2BDEFF3300DBFD30 /* station_detail_view_model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5395A2BDEFF3300DBFD30 /* station_detail_view_model.swift */; };
 		4CC5395D2BDFC14500DBFD30 /* get_historical_data_use_case.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5395C2BDFC14500DBFD30 /* get_historical_data_use_case.swift */; };
 		4CC5395F2BE0099000DBFD30 /* historical_data_point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CC5395E2BE0099000DBFD30 /* historical_data_point.swift */; };
@@ -90,16 +85,11 @@
 		4CB773C02CDF2B2B00A8B3A9 /* reports_view.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_view.swift; sourceTree = "<group>"; };
 		4CB773C22CE1780C00A8B3A9 /* reports_data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_data.swift; sourceTree = "<group>"; };
 		4CB773C52CE2762D00A8B3A9 /* mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mocks.swift; sourceTree = "<group>"; };
-		4CC5393D2BDEC81E00DBFD30 /* reports_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_view_controller.swift; sourceTree = "<group>"; };
-		4CC5393F2BDEC83400DBFD30 /* reports_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_controller.swift; sourceTree = "<group>"; };
 		4CC539412BDEC84000DBFD30 /* reports_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reports_view_model.swift; sourceTree = "<group>"; };
 		4CC539442BDEC87E00DBFD30 /* report_cell_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = report_cell_view_model.swift; sourceTree = "<group>"; };
 		4CC539472BDECB6A00DBFD30 /* station_map_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_map_controller.swift; sourceTree = "<group>"; };
 		4CC539492BDECB7700DBFD30 /* station_map_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_map_view_controller.swift; sourceTree = "<group>"; };
 		4CC5394B2BDECBFB00DBFD30 /* station_map_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_map_view_model.swift; sourceTree = "<group>"; };
-		4CC539502BDEF2B100DBFD30 /* report_filter_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = report_filter_view_controller.swift; sourceTree = "<group>"; };
-		4CC539562BDEFF1500DBFD30 /* station_detail_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_detail_controller.swift; sourceTree = "<group>"; };
-		4CC539582BDEFF2400DBFD30 /* station_detail_view_controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_detail_view_controller.swift; sourceTree = "<group>"; };
 		4CC5395A2BDEFF3300DBFD30 /* station_detail_view_model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = station_detail_view_model.swift; sourceTree = "<group>"; };
 		4CC5395C2BDFC14500DBFD30 /* get_historical_data_use_case.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = get_historical_data_use_case.swift; sourceTree = "<group>"; };
 		4CC5395E2BE0099000DBFD30 /* historical_data_point.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = historical_data_point.swift; sourceTree = "<group>"; };
@@ -188,8 +178,6 @@
 		4CC5393C2BDEC80400DBFD30 /* reports */ = {
 			isa = PBXGroup;
 			children = (
-				4CC5393F2BDEC83400DBFD30 /* reports_controller.swift */,
-				4CC5393D2BDEC81E00DBFD30 /* reports_view_controller.swift */,
 				4CB773C02CDF2B2B00A8B3A9 /* reports_view.swift */,
 				4CC539412BDEC84000DBFD30 /* reports_view_model.swift */,
 			);
@@ -229,8 +217,6 @@
 			isa = PBXGroup;
 			children = (
 				4C23A9BD2D17073E00CFC951 /* station_detail_view.swift */,
-				4CC539562BDEFF1500DBFD30 /* station_detail_controller.swift */,
-				4CC539582BDEFF2400DBFD30 /* station_detail_view_controller.swift */,
 				4CC5395A2BDEFF3300DBFD30 /* station_detail_view_model.swift */,
 			);
 			path = station_detail;
@@ -248,7 +234,6 @@
 			isa = PBXGroup;
 			children = (
 				4CC539462BDECB4D00DBFD30 /* station_map */,
-				4CCA18FC2BDADEC900A54A84 /* filter */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -282,14 +267,6 @@
 			children = (
 			);
 			path = model;
-			sourceTree = "<group>";
-		};
-		4CCA18FC2BDADEC900A54A84 /* filter */ = {
-			isa = PBXGroup;
-			children = (
-				4CC539502BDEF2B100DBFD30 /* report_filter_view_controller.swift */,
-			);
-			path = filter;
 			sourceTree = "<group>";
 		};
 		4CCF692C2BD5E3FE008A3987 = {
@@ -866,10 +843,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CC539612BE00AB000DBFD30 /* historical_data_point_model.swift in Sources */,
-				4CC539572BDEFF1500DBFD30 /* station_detail_controller.swift in Sources */,
 				4CC5394A2BDECB7700DBFD30 /* station_map_view_controller.swift in Sources */,
 				4CF8410C2BD6A598001C2DD7 /* bootstrap_view_model.swift in Sources */,
-				4CC539402BDEC83400DBFD30 /* reports_controller.swift in Sources */,
 				4CB773C12CDF2B2B00A8B3A9 /* reports_view.swift in Sources */,
 				4C01201D2BD90EEE002744C9 /* get_water_levels_use_case.swift in Sources */,
 				4C01201B2BD7E9E8002744C9 /* water_level_report_arso.swift in Sources */,
@@ -877,9 +852,7 @@
 				4CF7951F2BD7175D00EE3212 /* water_level_repository.swift in Sources */,
 				4CF7952C2BD7C6A600EE3212 /* water_level_report_mapper.swift in Sources */,
 				4CC5395B2BDEFF3300DBFD30 /* station_detail_view_model.swift in Sources */,
-				4CC539512BDEF2B100DBFD30 /* report_filter_view_controller.swift in Sources */,
 				4CF7951B2BD714BC00EE3212 /* water_level_report_model.swift in Sources */,
-				4CC5393E2BDEC81E00DBFD30 /* reports_view_controller.swift in Sources */,
 				4CF840FB2BD5E666001C2DD7 /* dependency_injector.swift in Sources */,
 				4CC5395D2BDFC14500DBFD30 /* get_historical_data_use_case.swift in Sources */,
 				4CCA18F72BDAAA2500A54A84 /* sublime_annotation.swift in Sources */,
@@ -890,7 +863,6 @@
 				4CC539452BDEC87E00DBFD30 /* report_cell_view_model.swift in Sources */,
 				4CF840FD2BD5E666001C2DD7 /* bootstrap_view_controller.swift in Sources */,
 				4CC539482BDECB6A00DBFD30 /* station_map_controller.swift in Sources */,
-				4CC539592BDEFF2400DBFD30 /* station_detail_view_controller.swift in Sources */,
 				4CC539662BE0257400DBFD30 /* WaterDataChart.swift in Sources */,
 				4CF8410A2BD5E9CD001C2DD7 /* AppDelegate.swift in Sources */,
 				4CC5394C2BDECBFB00DBFD30 /* station_map_view_model.swift in Sources */,
