@@ -47,6 +47,8 @@ class ReportsData {
     
     var dataState = DataState.initialized
     
+    var scrollTarget = ""
+    
     init(reports: [WaterLevelReport] = [WaterLevelReport](), waterLevelRepo: WaterLevelRepository) {
         reportCollection = reports
         if !reports.isEmpty {
@@ -174,5 +176,14 @@ class ReportsData {
         
         return (favorites: favorite.sorted { $0.waterbody < $1.waterbody },
                 other: nonfavorite.sorted { $0.waterbody < $1.waterbody })
+    }
+    
+    func getReport(stationCode: String) -> WaterLevelReport? {
+        var report: WaterLevelReport?
+        let _ = displayedData.firstIndex { section in
+            report = section.data.first(where: { $0.stationCode == stationCode })
+            return report != nil
+        }
+        return report
     }
 }

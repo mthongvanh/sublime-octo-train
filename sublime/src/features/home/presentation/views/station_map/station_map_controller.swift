@@ -11,9 +11,11 @@ import MapKit
 class StationMapController: NSObject {
     
     var viewModel: StationMapViewModel
+    var didSelectAnnotation: ((SublimeMapAnnotation) -> Void)?
     
-    init(viewModel: StationMapViewModel) {
+    init(viewModel: StationMapViewModel, didSelectAnnotation: ((SublimeMapAnnotation) -> Void)?) {
         self.viewModel = viewModel
+        self.didSelectAnnotation = didSelectAnnotation
     }
     
     func updateStations(filterText: String? = nil, reports: [WaterLevelReport]) {
@@ -21,8 +23,8 @@ class StationMapController: NSObject {
         viewModel.updateStations(stations: stations)
     }
 
-    func getStations(filterText: String? = nil, reports: [WaterLevelReport]) -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel)] {
-        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel)]()
+    func getStations(filterText: String? = nil, reports: [WaterLevelReport]) -> [String: (String, CLLocationCoordinate2D, WaterFlowLevel, String)] {
+        var stations = [String: (String, CLLocationCoordinate2D, WaterFlowLevel, String)]()
         for report in reports {
             let key = "\(report.waterbody) @ \(report.station)+\(report.latitude)+\(report.longitude)"
             let matchesFilter = filterText == nil ? true : !(key.range(of: filterText!.trimmingCharacters(in: CharacterSet.whitespaces), options: [.caseInsensitive])?.isEmpty ?? true)
@@ -37,7 +39,7 @@ class StationMapController: NSObject {
                 )
                 
                 stations.updateValue(
-                    (report.station, location, report.getFlow()),
+                    (report.station, location, report.getFlow(), report.stationCode),
                     forKey: key
                 )
             }
@@ -74,5 +76,11 @@ extension StationMapController: MKMapViewDelegate {
             
         }
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect annotation: any MKAnnotation) {
+        if let callback = didSelectAnnotation, let sublime = annotation as? SublimeMapAnnotation {
+            callback(sublime)
+        }
     }
 }
