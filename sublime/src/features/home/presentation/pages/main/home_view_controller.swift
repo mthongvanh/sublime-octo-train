@@ -15,6 +15,7 @@ class HomeViewController: UIViewController, BaseViewController {
     var viewModel: HomeViewModel
     
     var stationMapViewController: StationMapViewController
+    var stationMapController: StationMapController
     
     var reportsData: ReportsData
     
@@ -30,15 +31,14 @@ class HomeViewController: UIViewController, BaseViewController {
         
         do {
             let smvm = StationMapViewModel(onModelReady: nil, onModelUpdate: nil)
-            let smc = StationMapController(viewModel: smvm)
+            stationMapController = StationMapController(viewModel: smvm, didSelectAnnotation: nil)
             stationMapViewController = StationMapViewController(
-                controller: smc
+                controller: stationMapController
             )
 
             reportsData = ReportsData(waterLevelRepo: try AppServiceLocator.shared.get(
                 serviceType: WaterLevelRepository.self
             ))
-            
             super.init(nibName: nil, bundle: nil)
         } catch {
             fatalError(error.localizedDescription)
@@ -68,6 +68,10 @@ class HomeViewController: UIViewController, BaseViewController {
             filterSearchBar.showsCancelButton = true
             
             reportsHost = setupReports()
+            
+            stationMapController.didSelectAnnotation = { annotation in
+                self.reportsView?.scrollToStation(stationCode: annotation.stationCode)
+            }
             
             // make sure to add subviews before setting up constraints
             view.addSubview(stationMapViewController.mapView)
