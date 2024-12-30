@@ -64,7 +64,7 @@ struct WaterDataChart: View {
                     .foregroundStyle(.blue)
                     .lineStyle(StrokeStyle(lineWidth: 2))
                     .annotation(position: .bottom, alignment: .leading) {
-                        Text("Current: \(average, format: .number)")
+                        Text("Current: \(average, format: .number) \(labelForDataType(dataType: dataPoints.dataType))")
                             .font(.body.bold())
                             .foregroundStyle(.white)
                             .padding(10.0)
@@ -90,6 +90,19 @@ struct WaterDataChart: View {
             dataValueDescription = "Speed in m^3/s"
         case .temperature:
             dataValueDescription = "Temperature in Celsius"
+        }
+        return dataValueDescription
+    }
+    
+    func labelForDataType(dataType: WaterLevelValueType) -> String {
+        var dataValueDescription: String
+        switch dataPoints.dataType {
+        case .depth:
+            dataValueDescription = "cm"
+        case .speed:
+            dataValueDescription = "m^3/s"
+        case .temperature:
+            dataValueDescription = "C"
         }
         return dataValueDescription
     }

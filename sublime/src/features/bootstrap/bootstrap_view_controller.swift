@@ -34,13 +34,21 @@ class BootstrapViewController: UIViewController {
         let container = UIImageView(image: UIImage(named: "appIconBg"))
         container.contentMode = .scaleAspectFill
         container.backgroundColor = UIColor.blue
-        container.addSubview(activityIndicator)
-        activityIndicator.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
-        }
         view.addSubview(container)
         container.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        let icon = UIImageView(image: UIImage(named: "icon"))
+        view.addSubview(icon)
+        icon.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
+            make.width.height.equalTo(150)
+        }
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
         }
         
     }

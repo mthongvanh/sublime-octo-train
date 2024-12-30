@@ -19,24 +19,50 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="appIconBg" translatesAutoresizingMaskIntoConstraints="NO" id="p0n-bj-nlb">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="icon" translatesAutoresizingMaskIntoConstraints="NO" id="IEN-RT-GRP">
+                                <rect key="frame" x="121.66666666666669" y="331" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="IEN-RT-GRP" secondAttribute="height" id="Y1b-9v-bCz"/>
+                                    <constraint firstAttribute="width" constant="150" id="mBj-dY-Ucw"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sublime" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6dw-jU-cjq">
+                                <rect key="frame" x="128.66666666666666" y="498" width="135.99999999999997" height="43"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Real-Time River Updates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X2n-7h-LzA">
+                                <rect key="frame" x="120.00000000000001" y="545" width="153.33333333333337" height="15.666666666666629"/>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="p0n-bj-nlb" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="7Xi-5Q-1hJ"/>
+                            <constraint firstItem="6dw-jU-cjq" firstAttribute="top" secondItem="IEN-RT-GRP" secondAttribute="bottom" constant="17" id="BNo-Se-J9H"/>
                             <constraint firstAttribute="bottom" secondItem="p0n-bj-nlb" secondAttribute="bottom" id="H07-Ir-7UL"/>
                             <constraint firstAttribute="trailing" secondItem="p0n-bj-nlb" secondAttribute="trailing" id="M1M-Io-RZw"/>
                             <constraint firstItem="p0n-bj-nlb" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="Nev-k5-WNA"/>
+                            <constraint firstItem="IEN-RT-GRP" firstAttribute="centerY" secondItem="p0n-bj-nlb" secondAttribute="centerY" constant="-20" id="g2m-0u-siV"/>
+                            <constraint firstItem="X2n-7h-LzA" firstAttribute="top" secondItem="6dw-jU-cjq" secondAttribute="bottom" constant="4" id="gxM-Gf-5Ya"/>
+                            <constraint firstItem="6dw-jU-cjq" firstAttribute="centerX" secondItem="IEN-RT-GRP" secondAttribute="centerX" id="h2D-sA-Brr"/>
+                            <constraint firstItem="IEN-RT-GRP" firstAttribute="centerX" secondItem="p0n-bj-nlb" secondAttribute="centerX" id="lAD-f4-qoK"/>
+                            <constraint firstItem="X2n-7h-LzA" firstAttribute="centerX" secondItem="6dw-jU-cjq" secondAttribute="centerX" id="sye-mP-4Pq"/>
                         </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="52.671755725190835" y="374.64788732394368"/>
         </scene>
     </scenes>
     <resources>
         <image name="appIconBg" width="512" height="512"/>
+        <image name="icon" width="341.33334350585938" height="341.33334350585938"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
