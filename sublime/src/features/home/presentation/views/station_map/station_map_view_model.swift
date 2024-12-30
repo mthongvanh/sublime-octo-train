@@ -23,17 +23,17 @@ class StationMapViewModel: ViewModel<StationMapViewModel> {
     
     var annotations = [SublimeMapAnnotation]()
     
-    var ljubljana = CLLocationCoordinate2D(
+    var mirna = CLLocationCoordinate2D(
         latitude: CLLocationDegrees(
-            floatLiteral: 46.05108000
+            floatLiteral: 45.95164419436902
         ),
         longitude: CLLocationDegrees(
-            floatLiteral: 14.50513000
+            floatLiteral: 15.063696548071546
         )
     )
     
     var mapHeightFactor = 0.35
-    var mapZoomLevel = 0.5
+    var mapZoomLevel = 1.25
     var lastSelectedLocation: WaterLevelReport? {
         didSet {
             guard let update = onModelUpdate else {
@@ -45,7 +45,7 @@ class StationMapViewModel: ViewModel<StationMapViewModel> {
     }
     
     func initialLocation() -> CLLocationCoordinate2D {
-        ljubljana
+        mirna
     }
     
     func initialRegion() -> MKCoordinateRegion {

@@ -143,6 +143,7 @@ class HomeViewController: UIViewController, BaseViewController {
 extension HomeViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         reportsData.filter(query: searchText)
+        stationMapController.updateStations(filterText: searchText.count > 0 ? searchText : nil, reports: viewModel.reports)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
