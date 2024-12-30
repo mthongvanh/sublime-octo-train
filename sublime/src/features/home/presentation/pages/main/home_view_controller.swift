@@ -147,7 +147,6 @@ extension HomeViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
-        reportsData.filter()
     }
 }
 
