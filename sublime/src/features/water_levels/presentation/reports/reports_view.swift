@@ -63,6 +63,11 @@ struct ReportsView: View {
                                 }
                             }
                         }
+                        .refreshable(action: {
+                            Task {
+                                await reportsData.reloadData()
+                            }
+                        })
                         .onChange(of: reportsData.scrollTarget) { oldValue, newValue in
                             withAnimation {
                                 proxy.scrollTo(newValue, anchor: .top)
@@ -90,7 +95,7 @@ struct ReportsView: View {
         case .low: UIColor.systemGreen
         case .high: UIColor.systemRed
         default:
-            UIColor.yellow
+            UIColor.systemYellow
         }
     }
     

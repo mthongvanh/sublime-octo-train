@@ -28,12 +28,12 @@ class StationMapViewModel: ViewModel<StationMapViewModel> {
             floatLiteral: 45.95164419436902
         ),
         longitude: CLLocationDegrees(
-            floatLiteral: 15.063696548071546
+            floatLiteral: 14.73696548071546
         )
     )
     
     var mapHeightFactor = 0.35
-    var mapZoomLevel = 1.25
+    var mapZoomLevel = 1.4
     var lastSelectedLocation: WaterLevelReport? {
         didSet {
             guard let update = onModelUpdate else {

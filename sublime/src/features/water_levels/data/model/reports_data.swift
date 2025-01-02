@@ -45,6 +45,8 @@ class ReportsData {
     
     private(set) var favoriteCodes = [String]()
     
+    private var retries: Int = 0
+    
     var dataState = DataState.initialized
     
     var scrollTarget = ""
@@ -69,9 +71,17 @@ class ReportsData {
             let r = sortReports(reports: _reportCollection)
             updateDisplayedData(favorites: r.favorites, others: r.other)
             dataState = .loaded
+            retries = 0
         } catch {
             debugPrint("error loading reports data \(error)")
-            dataState = .error
+            if retries < 3 {
+                retries += 1
+                debugPrint("retries: \(retries)")
+                await reloadData()
+            } else {
+                dataState = .error
+                retries = 0
+            }
         }
     }
     
