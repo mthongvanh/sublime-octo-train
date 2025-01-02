@@ -9,6 +9,7 @@ import UIKit
 import MapKit
 import cleanboot_swift
 import SwiftUI
+import SnapKit
 
 class HomeViewController: UIViewController, BaseViewController {
     
@@ -23,7 +24,11 @@ class HomeViewController: UIViewController, BaseViewController {
     var reportsContainer: UIView = UIView()
     var reportsView: ReportsView?
     
+    var mapShadowView = UIView()
+    
     var filterSearchBar = UISearchBar()
+    
+    var mapSizeConstraint: ConstraintMakerEditable?
     
     init(viewModel: HomeViewModel) {
         // setup view model
@@ -54,9 +59,16 @@ class HomeViewController: UIViewController, BaseViewController {
         setupViews()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     // view setup
     func setupViews() {
         do {
+            self.view.backgroundColor = .systemGroupedBackground
+            self.navigationItem.titleView = filterSearchBar
+
             let getHistoricalDataUseCase = try AppServiceLocator.shared.get(serviceType: GetHistoricalDataUseCase.self)
             
             reportsView = ReportsView(reportsData: reportsData,
@@ -66,14 +78,26 @@ class HomeViewController: UIViewController, BaseViewController {
             
             filterSearchBar.delegate = self
             filterSearchBar.showsCancelButton = true
+            filterSearchBar.searchBarStyle = .minimal
             
             reportsHost = setupReports()
             
             stationMapController.didSelectAnnotation = { annotation in
                 self.reportsView?.scrollToStation(stationCode: annotation.stationCode)
             }
+            stationMapViewController.mapView.layer.masksToBounds = true
+            stationMapViewController.mapView.layer.cornerRadius = 16
+
+            mapShadowView.layer.masksToBounds = false
+            mapShadowView.layer.cornerRadius = 16
+            mapShadowView.layer.shadowColor = UIColor.black.cgColor
+            mapShadowView.layer.shadowOpacity = 0.275
+            mapShadowView.layer.shadowRadius = 8
+            mapShadowView.layer.shadowOffset = CGSize(width: 0, height: 4)
+            mapShadowView.backgroundColor = .black
             
             // make sure to add subviews before setting up constraints
+            view.addSubview(mapShadowView)
             view.addSubview(stationMapViewController.mapView)
             view.addSubview(reportsContainer)
             view.addSubview(filterSearchBar)
@@ -85,25 +109,27 @@ class HomeViewController: UIViewController, BaseViewController {
     }
     
     func setupConstraints() {
+        mapShadowView.snp.makeConstraints { make in
+            make.edges.equalTo(stationMapViewController.mapView.snp.edges)
+        }
+        
         stationMapViewController.mapView.snp.makeConstraints({ make in
-            make.leading.top.trailing.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(view.snp.topMargin).inset(0)
+            mapSizeConstraint = make.height.equalToSuperview().multipliedBy(
                 stationMapViewController.controller.viewModel.mapHeightFactor
             )
         })
         
-        filterSearchBar.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.top.equalTo(stationMapViewController.mapView.snp.bottom)
-        }
-        
         reportsContainer.snp.makeConstraints({ make in
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.bottom.equalToSuperview()
         })
         
         reportsContainer.snp.makeConstraints { make in
-            make.top.equalTo(filterSearchBar.snp.bottom)
-        }    }
+            make.top.equalTo(stationMapViewController.mapView.snp.bottom).inset(-16)
+        }
+    }
     
     func setupReports() -> UIHostingController<ReportsView> {
         /// cleanup old hosting controller and chart
@@ -154,6 +180,7 @@ extension HomeViewController: UISearchBarDelegate {
 /// Navigation section
 extension HomeViewController {
     func navigateToReport(report: WaterLevelReport, historicalData: GetHistoricalDataUseCase) {
+        self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.pushViewController(
             UIHostingController(
                 rootView: StationDetail(
