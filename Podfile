@@ -4,6 +4,7 @@
 pod 'SnapKit'
 pod 'SwiftSoup'
 pod 'SkeletonView'
+pod 'SwiftLint'
 
 target 'sublime' do
   # Comment the next line if you don't want to use dynamic frameworks

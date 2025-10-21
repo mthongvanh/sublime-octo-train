@@ -80,7 +80,45 @@ class MockWaterLevelRepo: WaterLevelRepository {
     }
     
     func getHistoricalData(stationCode: String, span: ObservationSpan) async throws -> [HistoricalDataPoint] {
-        [HistoricalDataPoint]()
+        // Generate mock historical data points
+        let calendar = Calendar.current
+        let now = Date()
+        var dataPoints = [HistoricalDataPoint]()
+        
+        let daysToGenerate: Int
+        switch span {
+        case .oneDay:
+            daysToGenerate = 1
+        case .sevenDays:
+            daysToGenerate = 7
+        case .thirtyDays:
+            daysToGenerate = 30
+        case .latest:
+            daysToGenerate = 1
+        }
+        
+        for dayOffset in 0..<daysToGenerate {
+            if let date = calendar.date(byAdding: .day, value: -dayOffset, to: now) {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                let dateString = dateFormatter.string(from: date)
+                
+                // Create varying data for visual interest
+                let depth = Int.random(in: 80...120)
+                let speed = Double.random(in: 1.0...3.5)
+                let temperature = Double.random(in: 5.0...15.0)
+                
+                dataPoints.append(HistoricalDataPoint(
+                    stationCode: stationCode,
+                    recordDate: dateString,
+                    depth: depth,
+                    speed: speed,
+                    temperature: temperature
+                ))
+            }
+        }
+        
+        return dataPoints.reversed() // Return in chronological order
     }
     
     func toggleStationFavorite(stationCode: String) async throws -> Bool {

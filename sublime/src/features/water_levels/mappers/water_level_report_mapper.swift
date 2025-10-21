@@ -94,8 +94,8 @@ extension WaterLevelReportARSO {
         let depth = valueOrEmptyType(json: json, key: "vodostaj", type: Double.self)
         let speed = valueOrEmptyType(json: json, key: "pretok", type: Double.self)
         let stationCode = valueOrEmptyType(json: json, key: "sifra", type: String.self)
-        let latitude = valueOrEmptyType(json: json, key: "ge_sirina", type: Double.self)
-        let longitude = valueOrEmptyType(json: json, key: "ge_dolzina", type: Double.self)
+        let latitude = valueOrEmptyType(json: json, key: "wgs84_sirina", type: Double.self)
+        let longitude = valueOrEmptyType(json: json, key: "wgs84_dolzina", type: Double.self)
         
         return WaterLevelReportARSO(
             station: station,

@@ -41,14 +41,16 @@ struct WaterLevelRemoteDataSourceImpl: WaterLevelRemoteDataSource {
         
         let items = try parser.parse(html: htmlString)
         
+        let year = Calendar.current.component(.year, from: Date())
+        
         for (text, _) in items {
             let waterData = text.components(separatedBy: .whitespaces)
-            if (waterData.count == 5 && waterData[0].range(of: ".2024") != nil) {
+            if (waterData.count == 5 && waterData[0].range(of: ".\(year)") != nil) {
                 dataPoints.append(
                     HistoricalDataPointModel(
                         stationCode: stationCode,
                         recordDate: "\(waterData[0]) \(waterData[1])",
-                        depth: Int(waterData[2]) ?? 0,
+                        depth: Double(waterData[2]).map { Int($0.rounded()) } ?? 0,
                         speed: Double(waterData[3]) ?? 0.0,
                         temperature: Double(waterData[4]) ?? 0.0
                     )
@@ -109,8 +111,8 @@ class WaterLevelXMLParser: NSObject, XMLParserDelegate {
         if (!attributeDict.values.isEmpty) {
             currenAttributes = attributeDict
             currentReport["sifra"] = attributeDict["sifra"]
-            currentReport["ge_sirina"] = attributeDict["ge_sirina"]
-            currentReport["ge_dolzina"] = attributeDict["ge_dolzina"]
+            currentReport["wgs84_sirina"] = attributeDict["wgs84_sirina"]
+            currentReport["wgs84_dolzina"] = attributeDict["wgs84_dolzina"]
         }
     }
     
